@@ -1,0 +1,5 @@
+.stack-work/
+*#*.hs#
+.vscode/*
+data_test
+new
