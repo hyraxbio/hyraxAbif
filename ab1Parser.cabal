@@ -19,6 +19,7 @@ library
   exposed-modules:     Hyrax.Abi
                      , Hyrax.Abi.Read
                      , Hyrax.Abi.Write
+                     , Hyrax.Abi.Fasta
   build-depends:       base >= 4.7 && < 5
                      , protolude
                      , text

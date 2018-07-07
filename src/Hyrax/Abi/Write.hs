@@ -26,10 +26,7 @@ import           System.FilePath ((</>))
 import qualified System.Directory as Dir
 
 import           Hyrax.Abi
-
-data Fasta = Fasta { _fastaName :: !Text
-                   , _fastaRead :: !Text
-                   } deriving (Show, Eq)
+import           Hyrax.Abi.Fasta
 
 data TraceData = TraceData { trData09G :: ![Int16]
                            , trData10A :: ![Int16]
@@ -465,25 +462,3 @@ iupac ns =
         (False, True,  True,  True ) -> 'B'
         (True,  True,  True,  True ) -> 'N'
         _ -> '_'
-
-
-parseFasta :: Text -> Either Text [Fasta]
-parseFasta s =
-  go (Txt.lines s) Nothing "" []
-
-  where
-    go :: [Text] -> Maybe Text -> Text -> [Fasta] -> Either Text [Fasta]
-    go (line:lines) (Just name) read acc =
-      if Txt.take 1 line /= ">"
-      then go lines (Just name) (read <> line) acc
-      else go lines (Just $ Txt.drop 1 line) "" (Fasta name read : acc)
-    go (line:lines) Nothing _read acc =
-      if Txt.take 1 line == ">"
-      then go lines (Just $ Txt.strip . Txt.drop 1 $ line) "" acc
-      else Left "Expecting name"
-    go [] Nothing _ acc =
-      Right acc
-    go [] (Just _name) "" _acc =
-      Left "Expecting read"
-    go [] (Just name) read acc =
-      Right $ Fasta name read : acc
