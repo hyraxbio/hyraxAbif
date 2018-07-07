@@ -14,26 +14,26 @@ module Hyrax.Abi
 import           Protolude
 import qualified Data.ByteString.Lazy as BSL
 
-data Header = Header { hName :: Text
-                     , hVersion :: Int
+data Header = Header { hName :: !Text
+                     , hVersion :: !Int
                      } deriving (Show, Eq)
 
-data Directory = Directory { dTagName :: Text
-                           , dTagNum :: Int
-                           , dElemTypeCode :: Int
-                           , dElemTypeDesc :: Text
-                           , dElemType :: ElemType
-                           , dElemSize :: Int
-                           , dElemNum :: Int
-                           , dDataSize :: Int
-                           , dDataOffset :: Int
-                           , dData :: BSL.ByteString
-                           , dDataDebug :: [Text]
+data Directory = Directory { dTagName :: !Text
+                           , dTagNum :: !Int
+                           , dElemTypeCode :: !Int
+                           , dElemTypeDesc :: !Text
+                           , dElemType :: !ElemType
+                           , dElemSize :: !Int
+                           , dElemNum :: !Int
+                           , dDataSize :: !Int
+                           , dDataOffset :: !Int
+                           , dData :: !BSL.ByteString
+                           , dDataDebug :: ![Text]
                            } deriving (Show, Eq)
 
-data Abi = Abi { aHeader :: Header
-               , aRootDir :: Directory
-               , aDirs :: [Directory]
+data Abi = Abi { aHeader :: !Header
+               , aRootDir :: !Directory
+               , aDirs :: ![Directory]
                } deriving (Show, Eq)
 
 

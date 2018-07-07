@@ -27,16 +27,16 @@ import qualified System.Directory as Dir
 
 import           Hyrax.Abi
 
-data Fasta = Fasta { _fastaName :: Text
-                   , _fastaRead :: Text
+data Fasta = Fasta { _fastaName :: !Text
+                   , _fastaRead :: !Text
                    } deriving (Show, Eq)
 
-data TraceData = TraceData { trData09G :: [Int16]
-                           , trData10A :: [Int16]
-                           , trData11T :: [Int16]
-                           , trData12C :: [Int16]
-                           , trValsPerBase :: Int
-                           , trFasta :: Text
+data TraceData = TraceData { trData09G :: ![Int16]
+                           , trData10A :: ![Int16]
+                           , trData11T :: ![Int16]
+                           , trData12C :: ![Int16]
+                           , trValsPerBase :: !Int
+                           , trFasta :: !Text
                            } deriving (Show)
 
 
