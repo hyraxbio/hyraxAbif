@@ -2,7 +2,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module DemoSpec (tests) where
+module AbiTests (tests, nucsGen) where
 
 
 import           Protolude
@@ -20,9 +20,9 @@ import qualified Hyrax.Abi as H
 import qualified Hyrax.Abi.Read as H
 import qualified Hyrax.Abi.Write as H
 
-nucsGen :: (Monad m) => PropertyT m Text
+nucsGen :: GenT Identity Text
 nucsGen = 
-  forAll $ Gen.text (Range.linear 1 1000) (Gen.element "ACGTMRWSYKVHDBNX")
+  Gen.text (Range.linear 1 1000) (Gen.element "ACGTMRWSYKVHDBNX")
 
 
 nucsNoIupacGen :: (Monad m) => PropertyT m Text
@@ -32,7 +32,7 @@ nucsNoIupacGen =
 
 fastaGen :: (Monad m) => PropertyT m ByteString
 fastaGen = do
-  nucs <- nucsGen
+  nucs <- forAll nucsGen
   pure . TxtE.encodeUtf8 $ "> 1\n" <> nucs
 
 
