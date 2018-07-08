@@ -94,6 +94,110 @@ read
  - The **read** is the set of input nucleotides, IUPAC ambiguity codes are supported (MRWSYKVHDBNX). A read can be single or multi-line
 
 
+### Weighted reads
+
+ - The weigh of a read specifies the intensity of the peak from 0 to 1. 
+ - Weights for each position are added to a maximum of 1 per nucleotide
+ - You can use `_` as a "blank" nucleotide, in which only the nucleotides from other reads will be considered
+
+
+For example
+
+
+  ```
+  > 0.5
+  ACG
+  > 0.3
+  AAAA
+  > 1
+  __AC
+  ```
+Results in the following weighted nucleotide per position
+
+ | Position | Nucleotides (weight) |
+ | -------- | -------------------- |
+ | 0        | A (0.5 + 0.3) |
+ | 1        | C (0.5), A (0.3) |
+ | 2        | G (0.5), A (0.3 + 1 = 1) |
+ | 3        | A (0.3), C (1) |
+
+
+*Note that the reads do not need to be the same length.*
+
+---
+
+#### Example FASTA - single file
+
+***eg1.fasta***
+```
+> 1
+ACTG
+```
+
+![](docs/eg_actg.png)
+
+
+Here there is a single FASTA with a single read with a weigh of 1 (100%). The chromatogram for this AB1 shows perfect traces for the input `ACTG` nucleotides
+
+---
+
+#### Example FASTA - two FASTA files
+
+***eg1.fasta***
+```
+> 1
+ACAG
+```
+
+***eg2.fasta***
+```
+> 1
+ACTG
+```
+
+![](docs/eg_acag_acgt.png)
+
+Two input FASTA files both with a weigh of 1. You can see in the second trace that the third nucleotide is a `T` (the trace is green). Exactly what the base-calling software (phred & recall etc) decide to call the base as depends on your settings and software choices.
+
+---
+
+#### Example FASTA - two FASTA files with different weights
+
+***eg1.fasta***
+```
+> 1
+ACAG
+```
+
+***eg2.fasta***
+```
+> 0.3
+ACTG
+```
+
+![](docs/eg_acag_acgt03.png)
+
+Here the second fasta has a weight of 0.3 and you can see the traces are 30% of the height of the top ones.
+
+
+---
+
+#### Example FASTA - single FASTA with a mix
+
+***eg1.fasta***
+```
+> 1
+ACAG
+> 0.3
+ACTG
+```
+
+![](docs/eg_acag_acgt_mix.png)
+
+The single input FASTA has an `AG` mix at the third nucleotide. The first read has a weight of 1 and the second a weight of 0.3
+
+---
+
 # Using the modules
 
  - Hyrax.Abi: The core AB1 types
@@ -101,6 +205,7 @@ read
  - Hyrax.Abi.Read: Module for parsing an existing AB1
  - Hyrax.Abi.Write: Module for generating a minimal AB1 from a given FASTA input
 
-For a detailed overview of the code see *TODO*
+For a detailed overview of the code see *TODO* and the haddock documentation *TODO*
 
-For now the terminal app (Main.hs) is the best starting point to understanding the code
+For now the terminal app (Main.hs) serves as an example and the best starting point to understand the code
+
