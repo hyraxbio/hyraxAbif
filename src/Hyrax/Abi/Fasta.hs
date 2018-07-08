@@ -9,8 +9,8 @@ module Hyrax.Abi.Fasta
 import           Protolude
 import qualified Data.Text as Txt
 
-data Fasta = Fasta { _fastaName :: !Text
-                   , _fastaRead :: !Text
+data Fasta = Fasta { fastaName :: !Text
+                   , fastaRead :: !Text
                    } deriving (Show, Eq)
 
 
