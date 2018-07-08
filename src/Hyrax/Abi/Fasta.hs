@@ -16,7 +16,7 @@ data Fasta = Fasta { _fastaName :: !Text
 
 parseFasta :: Text -> Either Text [Fasta]
 parseFasta s =
-  go (Txt.lines s) Nothing "" []
+  reverse <$> go (Txt.lines s) Nothing "" []
 
   where
     go :: [Text] -> Maybe Text -> Text -> [Fasta] -> Either Text [Fasta]
@@ -33,4 +33,4 @@ parseFasta s =
     go [] (Just _name) "" _acc =
       Left "Expecting read"
     go [] (Just name) read acc =
-      Right $ Fasta name read : acc
+      Right $ Fasta (Txt.strip name) read : acc
