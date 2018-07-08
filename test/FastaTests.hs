@@ -13,53 +13,45 @@ import qualified Hedgehog.Range as Range
 import qualified Hyrax.Abi.Fasta as F
 import           AbiTests (nucsGen)
 
-prop_fastaWithSpaces :: Property
-prop_fastaWithSpaces = property $ do
-  nucs <- forAll nucsGen
-  weight <- forAll $ Gen.int (Range.linear 1 9999)
-  let fasta = ">    " <> show weight <> " \n" <> nucs
-  let parsed = F.parseFasta fasta
-  parsed === Right [ F.Fasta { F._fastaName = show weight
-                             , F._fastaRead = nucs
-                             }
-                   ]
+-- | Generate data to construct a fasta "file"
+--   List of tuples of (name, lines of reads)
+--      maxReads controls the max number in the list
+genFastaData :: Int -> Gen [(Int, [Text])]
+genFastaData maxReads = do
+  Gen.list (Range.linear 1 maxReads) $
+    (,) <$> Gen.int (Range.linear 1 9999) <*> Gen.list (Range.linear 1 15) nucsGen
+
+
+-- | Convert fasta data to a single string
+toFastaTxt :: Bool -> [(Int, [Text])] -> Text
+toFastaTxt addSpaces is =
+  Txt.intercalate "\n" $ toRead <$> is
   
+  where
+    toRead (weight, ls) =
+      let sp = if addSpaces then "  " else "" in
+      ">" <> sp <> show weight <> "\n" <> Txt.intercalate "\n" ls
 
-prop_fastaWithNoSpaces :: Property
-prop_fastaWithNoSpaces = property $ do
-  nucs <- forAll nucsGen
-  weight <- forAll $ Gen.int (Range.linear 1 9999)
-  let fasta = ">" <> show weight <> "\n" <> nucs
-  let parsed = F.parseFasta fasta
-  parsed === Right [ F.Fasta { F._fastaName = show weight
-                             , F._fastaRead = nucs
-                             }
-                   ]
+
+-- | Convert fasta data to the expected list of FASTA values
+toFasta :: [(Int, [Text])] -> [F.Fasta]
+toFasta is =
+  toRead <$> is
   
+  where
+    toRead (weight, ls) = F.Fasta (show weight) $ Txt.concat ls
 
-prop_fastaMultiLine :: Property
-prop_fastaMultiLine = property $ do
-  nucsLines1 <- forAll $ Gen.list (Range.linear 1 15) nucsGen
-  let nucs1 = Txt.intercalate "\n" nucsLines1
-  let nucs1' = Txt.replace "\n" "" nucs1
-  weight1 <- forAll $ Gen.int (Range.linear 1 9999)
-  let fasta1 = ">" <> show weight1 <> "\n" <> nucs1
 
-  nucsLines2 <- forAll $ Gen.list (Range.linear 1 15) nucsGen
-  let nucs2 = Txt.intercalate "\n" nucsLines2
-  let nucs2' = Txt.replace "\n" "" nucs2
-  weight2 <- forAll $ Gen.int (Range.linear 1 9999)
-  let fasta2 = ">" <> show weight2 <> "\n" <> nucs2
-
-  let parsed = F.parseFasta $ fasta1 <> "\n" <> fasta2
-
-  parsed === Right [ F.Fasta { F._fastaName = show weight2
-                             , F._fastaRead = nucs2'
-                             }
-                   , F.Fasta { F._fastaName = show weight1
-                             , F._fastaRead = nucs1'
-                             }
-                   ]
+-- | Test parsing
+prop_fasta :: Property
+prop_fasta = property $ do
+  withSpaces <- forAll $ Gen.element [True, False]
+  fdata <- forAll $ genFastaData 3
+  let ftxt = toFastaTxt withSpaces fdata
+  let fasta = toFasta fdata
+  let parsed = F.parseFasta ftxt
+  parsed === Right fasta
+  
 
 tests :: IO Bool
 tests =
