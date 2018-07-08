@@ -23,7 +23,7 @@ parseFasta s =
     go (line:lines) (Just name) read acc =
       if Txt.take 1 line /= ">"
       then go lines (Just name) (read <> line) acc
-      else go lines (Just $ Txt.drop 1 line) "" (Fasta name read : acc)
+      else go lines (Just $ Txt.drop 1 line) "" (Fasta (Txt.strip name) read : acc)
     go (line:lines) Nothing _read acc =
       if Txt.take 1 line == ">"
       then go lines (Just $ Txt.strip . Txt.drop 1 $ line) "" acc

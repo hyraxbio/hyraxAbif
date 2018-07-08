@@ -2,7 +2,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module AbiTests (tests, nucsGen) where
+module AbiTests (tests) where
 
 
 import           Protolude
@@ -13,32 +13,17 @@ import qualified Data.Binary as B
 import qualified Data.Binary.Get as B
 import qualified Data.ByteString.Lazy as BSL
 import           Hedgehog
-import qualified Hedgehog.Gen as Gen
-import qualified Hedgehog.Range as Range
 
 import qualified Hyrax.Abi as H
 import qualified Hyrax.Abi.Read as H
 import qualified Hyrax.Abi.Write as H
+import           Generators
 
-nucsGen :: GenT Identity Text
-nucsGen = 
-  Gen.text (Range.linear 1 1000) (Gen.element "ACGTMRWSYKVHDBNX")
-
-
-nucsNoIupacGen :: (Monad m) => PropertyT m Text
-nucsNoIupacGen = 
-  forAll $ Gen.text (Range.linear 1 1000) (Gen.element "ACGT")
-
-
-fastaGen :: (Monad m) => PropertyT m ByteString
-fastaGen = do
-  nucs <- forAll nucsGen
-  pure . TxtE.encodeUtf8 $ "> 1\n" <> nucs
-
-
+-- | Test that an ab1 (write, read, write, read) results in the original data
 prop_roundtrip :: Property
 prop_roundtrip = property $ do 
-  fasta <- fastaGen
+  fdata <- forAll $ genFastaData 2
+  let fasta = TxtE.encodeUtf8 $ toFastaTxt False fdata
 
   wfasta <- evalEither $ H.readWeightedFasta fasta
   let ab1Written1 = H.generateAb1 ("test", wfasta)
@@ -49,7 +34,10 @@ prop_roundtrip = property $ do
 
   ab1Read1 === ab1Read2
   
-
+  
+-- | Generate an ab1 from a fasta and then confirm that the generated peaks of the
+--    chromatogram match the original fasta.
+--    Note that we are only testing the simple/single fasta case (i.e. no mixes)
 prop_readPeaks :: Property
 prop_readPeaks = property $ do
   nucs <- nucsNoIupacGen
@@ -107,7 +95,6 @@ getDirEntry ab1 dirName dirNum =
   case r of
     (a:_) -> Right $ H.dData a
     _ -> Left $ "No entry found for '" <> dirName <> "' " <> show dirNum
-
 
 
 readShorts :: BSL.ByteString -> [Int]
