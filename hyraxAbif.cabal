@@ -21,7 +21,13 @@ description:         This library provides functionality for parsing, modifying,
                      .
                      A basic terminal application that can dump and generate AB1s is included. See <https://github.com/hyraxbio/hyraxAbif/blob/master/app/Main.hs>
                      .
-                     See "Examples" directory
+                     See
+                     .
+                     * "Hyrax.Abif.Generate" for generate ABIF files from FASTA inputs
+                     * "Hyrax.Abif.Read" for parsing ABIF files
+                     * "Hyrax.Abif.Write" for creating/updating ABIF files
+                     * "Hyrax.Abif" for the core types
+                     * "Examples" for examples
 
 library
   ghc-options:         -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wimplicit-prelude -Wcompat -Wredundant-constraints -Wnoncanonical-monad-instances
