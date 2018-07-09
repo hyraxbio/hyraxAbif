@@ -175,7 +175,7 @@ generateAb1 (fName, sourceFasta) =
            , mkData 10 $ trData10A tr -- A
            , mkData 11 $ trData11T tr -- T
            , mkData 12 $ trData12C tr -- C
-           , mkBaseOrder BaseG BaseA BaseC BaseT -- Base order, should be GACT for 3500
+           , mkBaseOrder BaseG BaseA BaseT BaseC -- Base order, should be GATC for 3500
            , mkLane 1 -- Lane or capliary number
            , mkCalledBases $ trFasta tr -- Called bases
            , mkMobilityFileName 1 "KB_3500_POP7_BDTv3.mob" -- Mobility file name
