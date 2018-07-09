@@ -17,6 +17,7 @@ import           Hedgehog
 import qualified Hyrax.Abi as H
 import qualified Hyrax.Abi.Read as H
 import qualified Hyrax.Abi.Write as H
+import qualified Hyrax.Abi.Generate as H
 import           Generators
 
 -- | Test that an ab1 (write, read, write, read) results in the original data
@@ -29,7 +30,7 @@ prop_roundtrip = property $ do
   let ab1Written1 = H.generateAb1 ("test", wfasta)
   ab1Read1 <- evalEither $ H.getAbi ab1Written1
 
-  let ab1Written2 = H.writeAb1 ab1Read1
+  let ab1Written2 = H.createAbiBytes ab1Read1
   ab1Read2 <- evalEither $ H.getAbi ab1Written2
 
   ab1Read1 === ab1Read2

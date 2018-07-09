@@ -14,7 +14,7 @@ import qualified Language.Haskell.HsColour.Colourise as Clr
 
 import qualified Hyrax.Abi as Abi
 import qualified Hyrax.Abi.Read as Abi
-import qualified Hyrax.Abi.Write as Abi
+import qualified Hyrax.Abi.Generate as Abi
 
 main :: IO ()
 main = do

@@ -2,6 +2,22 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE MultiWayIf #-}
 
+{-|
+Module      : Hyax.Abi
+Description : Core AB1 types 
+Copyright   : (c) HyraxBio, 2018
+License     : BSD3
+Maintainer  : andre@hyraxbio.co.za
+Stability   : beta
+
+This module contains the core types for working with AB1 files.
+
+See
+
+  * <https://github.com/hyraxbio/hyraxAbi/#readme Source code on github>
+
+  * <http://www6.appliedbiosystems.com/support/software_community/ABIF_File_Format.pdf The ABIF spec>
+-}
 module Hyrax.Abi
     ( Abi (..)
     , Header (..)
@@ -13,6 +29,7 @@ module Hyrax.Abi
 
 import           Protolude
 import qualified Data.ByteString.Lazy as BSL
+
 
 data Header = Header { hName :: !Text
                      , hVersion :: !Int

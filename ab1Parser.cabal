@@ -1,17 +1,24 @@
 name:                ab1Parser
-version:             0.2.1.1
--- synopsis:
--- description:
+version:             0.2.2.1
+synopsis:            Modules for parsing, generating and manipulating AB1 files.
 homepage:            https://github.com/hyraxbio/hyraxAbi/#readme
 license:             BSD3
 license-file:        LICENSE
 author:              HyraxBio
-maintainer:          andre@hyraxbio.com
+maintainer:          andre@hyraxbio.co.za
 copyright:           2018 HyraxBio
 category:            Bioinformatics
 build-type:          Simple
 extra-source-files:  README.md
-cabal-version:       >=1.10
+extra-doc-files:     docs/*.png
+cabal-version:       1.18
+description:         This library provides functionality for parsing, modifying and writing ABI files
+                     .
+                     Any AB1 file confirming to the standard at <http://www6.appliedbiosystems.com/support/software_community/ABIF_File_Format.pdf> should be supported.
+                     .   
+                     This library also support generating a minimal ABI file from a FASTA input sequence.
+                     .
+                     A basic terminal application that can dump and generate AB1s is included. See <https://github.com/hyraxbio/hyraxAbi/blob/master/app/Main.hs>
 
 library
   ghc-options:         -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wimplicit-prelude -Wcompat -Wredundant-constraints -Wnoncanonical-monad-instances
@@ -19,6 +26,7 @@ library
   exposed-modules:     Hyrax.Abi
                      , Hyrax.Abi.Read
                      , Hyrax.Abi.Write
+                     , Hyrax.Abi.Generate
                      , Hyrax.Abi.Fasta
   build-depends:       base >= 4.7 && < 5
                      , protolude

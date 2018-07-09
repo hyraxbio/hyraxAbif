@@ -114,12 +114,10 @@ For example
   ```
 Results in the following weighted nucleotide per position
 
- | Position | Nucleotides (weight) |
- | -------- | -------------------- |
- | 0        | A (0.5 + 0.3) |
- | 1        | C (0.5), A (0.3) |
- | 2        | G (0.5), A (0.3 + 1 = 1) |
- | 3        | A (0.3), C (1) |
+ * 0: `A` (0.5 + 0.3)
+ * 1: `C` (0.5), `A` (0.3)
+ * 2: `G` (0.5), `A` (0.3 + 1 = 1)
+ * 3: `A` (0.3), `C` (1)
 
 
 *Note that the reads do not need to be the same length.*
