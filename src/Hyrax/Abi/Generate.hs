@@ -1,7 +1,78 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TupleSections #-}
+{-|
+Module      : Hyax.Abi.Generate
+Description : Generate AB1 from a weighted FASTA
+Copyright   : (c) HyraxBio, 2018
+License     : BSD3
+Maintainer  : andre@hyraxbio.co.za
 
+Functionality for generating AB1 files from an input FASTA
+
+= Weighted reads
+
+The input FASTA files have "weighted" reads. The name for each read is an value between 0 and 1
+ which specifies the height of the peak relative to a full peak. 
+
+
+== Single read
+
+The most simple example is a single FASTA with a single read with a weight of 1
+
+@
+> 1
+ACTG
+@
+
+<<docs/eg_actg.png>>
+
+The chromatogram for this AB1 shows perfect traces for the input `ACTG` nucleotides with a full height peak.
+
+
+== Mixes & multiple reads 
+
+The source FASTA can have multiple reads, which results in a chromatogram with mixes
+
+@
+> 1
+ACAG
+> 0.3
+ACTG
+@
+
+<<docs/eg_acag_acgt_mix.png>>
+
+There is an `AT` mix at the third nucleotide. The first read has a weight of 1 and the second a weight of 0.3.
+The chromatogram shows the mix and the `T` with a lower peak (30% of the `A` peak)
+
+== Only adding a single mix
+
+Rather than the above the could have been written as
+
+@
+> 1
+ACAG
+> 0.3
+__T
+@
+
+i.e.
+
+ - The second read is shorter than the first, it only goes as far as the required mix
+ - `_` used when not adding any data
+
+
+__ TODO image __
+
+== Summing weights
+
+ - The weigh of a read specifies the intensity of the peak from 0 to 1. 
+ - Weights for each position are added to a maximum of 1 per nucleotide
+ - You can use `_` as a "blank" nucleotide, in which only the nucleotides from other reads will be considered
+
+See README.md for additional details and examples
+-}
 module Hyrax.Abi.Generate
     ( generateAb1s
     , generateAb1

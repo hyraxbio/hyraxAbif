@@ -1,6 +1,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
+-- | Functionality for writing AB1 files
 module Hyrax.Abi.Write
     ( createAbiBytes
     , writeAbi

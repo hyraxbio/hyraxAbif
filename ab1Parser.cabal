@@ -12,13 +12,16 @@ build-type:          Simple
 extra-source-files:  README.md
 extra-doc-files:     docs/*.png
 cabal-version:       1.18
-description:         This library provides functionality for parsing, modifying and writing ABI files
+description:         This library provides functionality for parsing, modifying, writing and generating ABI files
+                     <<docs/eg_acag_acgt.png>>
                      .
                      Any AB1 file confirming to the standard at <http://www6.appliedbiosystems.com/support/software_community/ABIF_File_Format.pdf> should be supported.
                      .   
                      This library also support generating a minimal ABI file from a FASTA input sequence.
                      .
                      A basic terminal application that can dump and generate AB1s is included. See <https://github.com/hyraxbio/hyraxAbi/blob/master/app/Main.hs>
+                     .
+                     See @Examples@ directory
 
 library
   ghc-options:         -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wimplicit-prelude -Wcompat -Wredundant-constraints -Wnoncanonical-monad-instances
@@ -28,6 +31,8 @@ library
                      , Hyrax.Abi.Write
                      , Hyrax.Abi.Generate
                      , Hyrax.Abi.Fasta
+                     , Examples
+                     , Examples.AddComment
   build-depends:       base >= 4.7 && < 5
                      , protolude
                      , text

@@ -192,7 +192,7 @@ ACTG
 
 ![](docs/eg_acag_acgt_mix.png)
 
-The single input FASTA has an `AG` mix at the third nucleotide. The first read has a weight of 1 and the second a weight of 0.3
+The single input FASTA has an `AT` mix at the third nucleotide. The first read has a weight of 1 and the second a weight of 0.3
 
 ---
 
@@ -201,9 +201,31 @@ The single input FASTA has an `AG` mix at the third nucleotide. The first read h
  - Hyrax.Abi: The core AB1 types
  - Hyrax.Abi.Fasta: A simple FASTA parser used when generating AB1s
  - Hyrax.Abi.Read: Module for parsing an existing AB1
- - Hyrax.Abi.Write: Module for generating a minimal AB1 from a given FASTA input
+ - Hyrax.Abi.Write: Module for writing a new AB1 file
+ - Hyrax.Abi.Generate: Module for generating a minimal AB1 from a given FASTA input
 
 For a detailed overview of the code see *TODO* and the haddock documentation *TODO*
 
 For now the terminal app (Main.hs) serves as an example and the best starting point to understand the code
 
+
+## E.g. Add a comment to an existing AB1 file
+
+
+```
+import qualified Hyrax.Abi as Abi
+import qualified Hyrax.Abi.Read as Abi
+import qualified Hyrax.Abi.Write as Abi
+
+addComment :: IO ()
+addComment = do
+  abi' <- Abi.readAbi "example.ab1"
+
+  case abi' of
+    Left e -> putText $ "error reading ABI: " <> e
+    Right abi -> do
+      let modified = Abi.addDirectory abi $ Abi.mkComment "new comment"
+      Abi.writeAbi "example.modified.ab1" modified
+```
+
+For additional examples see the Examples directory

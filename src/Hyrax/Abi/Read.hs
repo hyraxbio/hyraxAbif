@@ -2,6 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE MultiWayIf #-}
 
+-- | Functionality for reading and parsing AB1 files
 module Hyrax.Abi.Read
     ( readAbi
     , getAbi
