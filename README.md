@@ -1,4 +1,4 @@
-# HyraxBio AB1 parser and generator (beta 0.2)
+# HyraxBio AB1 parser, writer and generator (beta 0.2)
 
 This project contains
 
@@ -14,7 +14,7 @@ See http://www6.appliedbiosystems.com/support/software_community/ABIF_File_Forma
 
 To dump an existing AB1 run
 
- `ab1Parser-exe dump example.ab1`
+ `hyraxAbi-exe dump example.ab1`
 
 This will output the structure of the AB1 like this
 
@@ -74,7 +74,7 @@ Selected data types have the "debug data" element populated. e.g. the PBAS (FAST
 
 To create an AB1 run
 
- `ab1Parser-exe gen "./pathContainingFastas" "./pathForOutputAb1s"`
+ `hyraxAbi-exe gen "./pathContainingFastas" "./pathForOutputAb1s"`
 
 This will create an AB1 per input FASTA
 
