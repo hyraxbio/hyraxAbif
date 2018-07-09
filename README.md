@@ -6,7 +6,10 @@ This project contains
  - Support for generating a minimal AB1 file from a FASTA input file
  - A simple terminal app to perform these operations
 
-See http://www6.appliedbiosystems.com/support/software_community/ABIF_File_Format.pdf for a high level overview of the AB1 file format.
+See
+
+  - https://hackage.haskell.org/package/hyraxAbif for the hackage documentation
+  - http://www6.appliedbiosystems.com/support/software_community/ABIF_File_Format.pdf for a high level overview of the AB1 file format.
 
 # Building
 
