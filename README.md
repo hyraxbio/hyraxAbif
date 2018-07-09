@@ -8,7 +8,20 @@ This project contains
 
 See http://www6.appliedbiosystems.com/support/software_community/ABIF_File_Format.pdf for a high level overview of the AB1 file format.
 
+# Building
+
+Build with one of
+
+ - `stack build` or (`make build`)
+ - `cabal new-build`
+
+
 # Terminal app
+
+Run with
+
+ - `stack exec hyraxAbi-exe -- -- dump` if you are using stack
+ - `cabal new-run hyraxAbi-exe dump` if you are using cabal 2.x
 
 ## Dump AB1
 

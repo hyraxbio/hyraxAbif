@@ -3,6 +3,7 @@ stack_yaml = STACK_YAML="stack.yaml"
 stack = $(stack_yaml) stack
 
 all: build test lint
+cabal-all: cabal-build cabal-test lint
 
 setup:
 	$(stack) setup
@@ -17,6 +18,9 @@ check-nightly:
 	$(stack) setup --resolver nightly
 	$(stack) build --resolver nightly --pedantic --test
 
+cabal-build:
+	cabal new-build
+
 build:
 	$(stack) build $(package) --no-run-tests
 
@@ -26,11 +30,17 @@ build-dirty:
 run:
 	$(stack) build --fast && $(stack) exec -- $(package)-exe
 
+cabal-run:
+	cabal new-run $(package)-exe
+
 ghci:
 	$(stack) ghci $(package):lib
 
 test:
 	$(stack) test $(package)
+
+cabal-test:
+	cabal new-test
 
 test-ghci:
 	$(stack) ghci $(package):test:$(package)-test

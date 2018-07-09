@@ -16,6 +16,6 @@ main = do
                       , FastaTests.tests
                       ]
 
-  if (and results)
+  if and results
     then pass
     else exitFailure

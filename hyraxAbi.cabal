@@ -1,8 +1,9 @@
+cabal-version:       2.2
 name:                hyraxAbi
 version:             0.2.3.1
 synopsis:            Modules for parsing, generating and manipulating AB1 files.
 homepage:            https://github.com/hyraxbio/hyraxAbi/#readme
-license:             BSD3
+license:             BSD-3-Clause
 license-file:        LICENSE
 author:              HyraxBio
 maintainer:          andre@hyraxbio.co.za, andre@andrevdm.com
@@ -11,7 +12,6 @@ category:            Bioinformatics
 build-type:          Simple
 extra-source-files:  README.md
 extra-doc-files:     docs/*.png
-cabal-version:       1.18
 description:         This library provides functionality for parsing, modifying, writing and generating ABI files
                      <<docs/eg_multi_mix.png>>
                      .
@@ -35,7 +35,7 @@ library
                      , Examples.AddComment
                      , Examples.RemoveComments
                      , Examples.ReadAb1
-  build-depends:       base >= 4.7 && < 5
+  build-depends:       base >= 4.9.1.0 && < 5
                      , protolude >= 0.2.2 && < 0.2.3
                      , text >= 1.2.3.0 && < 1.2.4.0
                      , bytestring >= 0.10.8.2 && < 0.10.9.0
@@ -48,7 +48,7 @@ executable hyraxAbi-exe
   hs-source-dirs:      app
   main-is:             Main.hs
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wimplicit-prelude -Wcompat -Wredundant-constraints -Wnoncanonical-monad-instances
-  build-depends:       base
+  build-depends:       base >= 4.9.1.0 && < 5
                      , hyraxAbi
                      , protolude >= 0.2.2 && < 0.2.3
                      , text >= 1.2.3.0 && < 1.2.4.0
@@ -61,7 +61,7 @@ test-suite hyraxAbi-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Tests.hs
-  build-depends:       base
+  build-depends:       base >= 4.9.1.0 && < 5
                      , hyraxAbi
                      , protolude >= 0.2.2 && < 0.2.3
                      , text >= 1.2.3.0 && < 1.2.4.0
