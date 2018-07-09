@@ -7,3 +7,4 @@ example.ab1
 example.modified.ab1
 dist/
 dist-newstyle/
+.ghc.environment*
