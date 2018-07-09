@@ -192,7 +192,25 @@ ACTG
 
 ![](docs/eg_acag_acgt_mix.png)
 
-The single input FASTA has an `AT` mix at the third nucleotide. The first read has a weight of 1 and the second a weight of 0.3
+The single input FASTA has an `AT` mix at the third nucleotide. The first read has a weight of 1 and the second a weight of 0.3.
+Notice that the maximum weight is 1, e.g. the first `A` has the same intensity as the second even though the first one has the reads weighted both 1 and 0.3
+
+---
+
+
+#### Example FASTA - Multiple mixes
+
+***eg1.fasta***
+```
+> 1
+ACAG
+> 0.3
+_GT
+> 0.2
+_G
+```
+
+![](docs/eg_multi_mix.png)
 
 ---
 
