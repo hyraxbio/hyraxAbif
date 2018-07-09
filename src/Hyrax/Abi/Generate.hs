@@ -6,9 +6,10 @@ Module      : Hyax.Abi.Generate
 Description : Generate AB1 from a weighted FASTA
 Copyright   : (c) HyraxBio, 2018
 License     : BSD3
-Maintainer  : andre@hyraxbio.co.za
+Maintainer  : andre@hyraxbio.co.za, andre@andrevdm.com
 
-Functionality for generating AB1 files from an input FASTA
+Functionality for generating AB1 files from an input FASTA. These AB1s are supported by both PHRED and recall,
+if you are using other software you may need to add additional required sections.
 
 = Weighted reads
 
@@ -111,8 +112,7 @@ generateAb1s source dest = do
       traverse_ (\(name, ab1) -> BS.writeFile (dest </> Txt.unpack name <> ".ab1") $ BSL.toStrict ab1) ab1s
 
 
--- | Create the 'ByteString' data for an AB1 given the data from a weighted FASTA
--- See 'readWeightedFasta'
+-- | Create the 'ByteString' data for an AB1 given the data from a weighted FASTA (see 'readWeightedFasta')
 generateAb1 :: (Text, [(Double, Text)]) -> BSL.ByteString
 generateAb1 (fName, sourceFasta) = 
   let

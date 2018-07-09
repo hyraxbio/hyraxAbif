@@ -2,11 +2,31 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE MultiWayIf #-}
 
--- | Functionality for reading and parsing AB1 files
+{-|
+Module      : Hyax.Abi.Read
+Description : Read and parse AB1 files
+Copyright   : (c) HyraxBio, 2018
+License     : BSD3
+Maintainer  : andre@hyraxbio.co.za, andre@andrevdm.com
+Stability   : beta
+
+Functionality for reading and parsing AB1 files
+
+e.g.
+
+@
+abi' <- readAbi "example.ab1"
+
+case abi' of
+  Left e -> putStrLn $ "error reading ABI: " <> e
+  Right abi -> print $ clearAbi abi
+@
+-}
 module Hyrax.Abi.Read
     ( readAbi
     , getAbi
-    , clean
+    , clear
+    , clearAbi
     , getDebug
     , getPString
     , getCString
@@ -27,11 +47,12 @@ import           Control.Monad.Fail (fail)
 import           Hyrax.Abi
 
 
+-- | Read and parse an AB1 file
 readAbi :: FilePath -> IO (Either Text Abi)
-readAbi path = 
-  getAbi <$> BSL.readFile path
+readAbi path = getAbi <$> BSL.readFile path
 
 
+-- | Parse an AB1 from a 'ByteString'
 getAbi :: BSL.ByteString -> Either Text Abi
 getAbi bs = do
   (header, rootDir) <- case B.runGetOrFail (getRoot bs) bs of
@@ -47,37 +68,51 @@ getAbi bs = do
   pure $ Abi header rootDir ds
 
 
-clean :: Directory -> Directory
-clean d = d { dData = "" }
+-- | Removes all data from the ABI's directories
+clearAbi :: Abi -> Abi
+clearAbi a = a { aRootDir = clear $ aRootDir a
+               , aDirs = clear <$> aDirs a
+               }
 
 
+-- | Removes all data from a directory entry. This will probably only be useful when trying to show an ABI value
+clear :: Directory -> Directory
+clear d = d { dData = "" }
+
+
+-- | Populate the directory entry with debug data (into 'dDataDebug').
+-- This is done for selected types only, e.g. for strings so that printing the structure will display
+-- readable/meaningfull info
 getDebug :: Directory -> Directory
 getDebug d =
   let bsAtOffset = dData d in
   
   case dElemType d of
+    -- Strings have a count = number of chars, not number of "strings"
     ElemPString ->
       if dDataSize d <= 4
       then d { dDataDebug = [TxtE.decodeUtf8 . BSL.toStrict . BSL.drop 1 . BSL.take (fromIntegral $ dDataSize d) $ dData d] }
       else d { dDataDebug = [B.runGet (lbl getPString) bsAtOffset] }
 
+    -- Strings have a count = number of chars, not number of "strings"
     ElemCString ->
       if dDataSize d <= 4
       then d { dDataDebug = [TxtE.decodeUtf8 . BSL.toStrict . BSL.take (fromIntegral $ dDataSize d - 1) $ dData d] }
       else d { dDataDebug = [B.runGet (lbl . getCString $ dDataSize d) bsAtOffset] }
 
     y ->
+      -- For non-array entries
       if dElemNum d == 1
       then 
         case y of
-          ElemDate -> --TODO create datetime
+          ElemDate -> 
             flip B.runGet (dData d) $ lbl $ do
               yy <- B.getInt16be
               mt <- B.getInt8
               dt <- B.getInt8
               pure d { dDataDebug = [show yy <> "/" <> show mt <> "/" <> show dt]}
              
-          ElemTime -> --TODO create datetime
+          ElemTime ->
             flip B.runGet (dData d) $ lbl $ do
               hr <- B.getInt8
               mn <- B.getInt8
@@ -114,7 +149,7 @@ getDebug d =
           _ -> d
       else
         case y of
-          ElemChar ->
+          ElemChar -> -- Array of chars can be treated as a string
             flip B.runGet (dData d) $ lbl $ do
               cs <- readArray B.getWord8
               let c = BSL.pack cs
@@ -125,7 +160,7 @@ getDebug d =
           --    xs <- readArray B.getInt16be
           --    pure $ d { dDataDebug = [show xs] }
 
-          _ -> d
+          _ -> d -- Do nothing
 
   where
     lbl = B.label $ "Reading " <> show (dElemTypeDesc d) <> " data size=" <> show (dDataSize d) <> " dir entry=" <> Txt.unpack (dTagName d) <> " cached data size=" <> (show . BSL.length $ dData d) <> ". "
@@ -140,23 +175,27 @@ getDebug d =
         pure (c:cs)
 
 
+-- | Parse a 'ElemPString'
 getPString :: B.Get Text
 getPString = do
   sz <- fromIntegral <$> B.getInt8
   TxtE.decodeUtf8 <$> B.label ("PString length=" <> show sz <> ".") (B.getByteString sz)
 
 
+-- | Parse a 'ElemCString'
 getCString :: Int -> B.Get Text
 getCString sz = 
   TxtE.decodeUtf8 <$> B.getByteString (sz - 1)
 
 
+-- | Parse the ABI 'Header'
 getHeader :: B.Get Header
 getHeader = 
   Header <$> (TxtE.decodeUtf8 <$> B.getByteString 4)
          <*> (fromIntegral <$> B.getInt16be)
 
 
+-- | Parse the root ('Header' and 'Directory')
 getRoot :: BSL.ByteString -> B.Get (Header, Directory)
 getRoot bs = do
   h <- getHeader
@@ -164,6 +203,7 @@ getRoot bs = do
   pure (h, rd)
 
 
+-- | Parse a single 'Directory' entry and read its data
 getDirectory :: BSL.ByteString -> B.Get Directory
 getDirectory bs = do
   tagName <- TxtE.decodeUtf8 <$> B.getByteString 4
@@ -174,6 +214,9 @@ getDirectory bs = do
   dataSize <- fromIntegral <$> B.getInt32be
   offsetDataBytes <- B.lookAhead $ B.getLazyByteString 4
   dataOffset <- fromIntegral <$> B.getInt32be
+
+  -- Read the data
+  --  Data that is 4 bytes or less is stored in the offset field
   dataBytes <- if dataSize <= 4
                     then pure $ BSL.take (fromIntegral dataSize) offsetDataBytes
                     else case B.runGetOrFail (B.getLazyByteString $ fromIntegral dataSize) $ BSL.drop (fromIntegral dataOffset) bs of
@@ -195,11 +238,12 @@ getDirectory bs = do
                  } 
 
 
+-- | Parse all the directoy entries
 getDirectories :: BSL.ByteString -> [Directory] -> Int -> B.Get [Directory]
 getDirectories _ acc 0 = pure acc
 getDirectories bs acc more = do
   d <- getDirectory bs
-  B.skip 4
+  B.skip 4 -- Skip the reserved field
   getDirectories bs (acc <> [d]) (more - 1)
 
 

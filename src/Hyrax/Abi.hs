@@ -7,7 +7,7 @@ Module      : Hyax.Abi
 Description : Core AB1 types 
 Copyright   : (c) HyraxBio, 2018
 License     : BSD3
-Maintainer  : andre@hyraxbio.co.za
+Maintainer  : andre@hyraxbio.co.za, andre@andrevdm.com
 Stability   : beta
 
 This module contains the core types for working with AB1 files.
@@ -31,29 +31,37 @@ import           Protolude
 import qualified Data.ByteString.Lazy as BSL
 
 
-data Header = Header { hName :: !Text
-                     , hVersion :: !Int
-                     } deriving (Show, Eq)
-
-data Directory = Directory { dTagName :: !Text
-                           , dTagNum :: !Int
-                           , dElemTypeCode :: !Int
-                           , dElemTypeDesc :: !Text
-                           , dElemType :: !ElemType
-                           , dElemSize :: !Int
-                           , dElemNum :: !Int
-                           , dDataSize :: !Int
-                           , dDataOffset :: !Int
-                           , dData :: !BSL.ByteString
-                           , dDataDebug :: ![Text]
-                           } deriving (Show, Eq)
-
+-- | A single ABI
 data Abi = Abi { aHeader :: !Header
                , aRootDir :: !Directory
                , aDirs :: ![Directory]
                } deriving (Show, Eq)
 
 
+-- | ABI header
+data Header = Header { hName :: !Text
+                     , hVersion :: !Int
+                     } deriving (Show, Eq)
+
+-- | ABI directory entry.
+-- The 'dData' field contains the data for the entry
+data Directory = Directory { dTagName :: !Text        -- ^ Tag name
+                           , dTagNum :: !Int          -- ^ Tag number, see e.g. how DATA entries use this
+                           , dElemType :: !ElemType   -- ^ Type of an element
+                           , dElemTypeCode :: !Int    -- ^ Integer value of 'dElemType'
+                           , dElemTypeDesc :: !Text   -- ^ Description of 'dElemType'
+                           , dElemSize :: !Int        -- ^ Size in bytes of each element
+                           , dElemNum :: !Int         -- ^ Number of elements in the data. See the spec per data type. E.g. for a string this is the number of characters
+                           , dDataSize :: !Int        -- ^ Number of bytes in the data
+                           , dDataOffset :: !Int      -- ^ Offset of this directory entry's data in the file. For data that is four
+                                                      --    bytes or less, the data itself is stored in this field.
+                                                      --    This value will be recalculated when writing an ABI so you do not need to manually set it.
+                           , dData :: !BSL.ByteString -- ^ The entry's data
+                           , dDataDebug :: ![Text]    -- ^ Optinal debug data, populated by 'Hyrax.Abi.Read.getDebug' when a ABI is parsed
+                           } deriving (Show, Eq)
+
+
+-- | Type of the elements in a directory entry. See the spec for details on each type if required.
 data ElemType = ElemUnknown
               | ElemCustom
               | ElemByte
@@ -83,9 +91,11 @@ data ElemType = ElemUnknown
               deriving (Show, Eq)
 
 
+-- | Get an 'ElemType' from a elem type code
 getElemType :: Int -> ElemType
 getElemType e = fst $ describeElemType e
 
+-- | Get the description for an 'ElemType'
 describeElemType :: Int -> (ElemType, Text)
 describeElemType    1 = (ElemByte,    "byte")
 describeElemType    2 = (ElemChar,    "char")

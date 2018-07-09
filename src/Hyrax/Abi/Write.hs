@@ -1,7 +1,17 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
--- | Functionality for writing AB1 files
+{-|
+Module      : Hyax.Abi.Write
+Description : Functionality for writing AB1 files
+Copyright   : (c) HyraxBio, 2018
+License     : BSD3
+Maintainer  : andre@hyraxbio.co.za, andre@andrevdm.com
+Stability   : beta
+
+Functionality for writing AB1 files.
+See 'Hyrax.Abi.Generate.generateAb1' for an example of how to create an 'Ab1'
+-}
 module Hyrax.Abi.Write
     ( createAbiBytes
     , writeAbi
@@ -34,33 +44,45 @@ import qualified Data.ByteString.Lazy as BSL
 
 import           Hyrax.Abi
 
+-- | Used to specify the base order for the FWO directry entry, see 'mkBaseOrder'
 data Base = BaseA | BaseC | BaseG | BaseT
 
 
+-- | Write an 'Abi' to a 'ByteString'
 createAbiBytes :: Abi -> BSL.ByteString
 createAbiBytes ab1 =
   B.runPut (putAbi ab1)
 
   
+-- | Write an 'Abi' to a file
 writeAbi :: FilePath -> Abi -> IO ()
 writeAbi destPath ab1 = do
   let b = createAbiBytes ab1
   BS.writeFile destPath $ BSL.toStrict b
 
   
+-- | Create the 'Abi' using "Data.Binary"
 putAbi :: Abi -> B.Put
 putAbi (Abi header root dirs) = do
+  -- Data starts at offset 128
   let startDataOffset = 128
+  -- Total data size
   let dataSize = foldl' (\acc i -> if i > 4 then acc + i else acc) 0 $ dDataSize <$> dirs
   
+  -- Write the header
   putHeader header
 
+  -- Write the root directory entry
   putDirectory (startDataOffset + dataSize) $ root { dDataSize = 28 * length dirs
                                                    , dElemNum = length dirs
                                                    }
 
+  -- Write 47 zero Int16 values as required by the spec
   traverse_ B.putInt16be $ replicate 47 0
+  -- Write the data, for all data larger than four bytes. Data four bytes or less is stored
+  --  in the offset field
   traverse_ (B.putLazyByteString . dData) $ filter (\d -> dDataSize d > 4) dirs
+  -- Write the directory entries. 
   foldM_ writeDir startDataOffset dirs
 
   where
@@ -71,22 +93,26 @@ putAbi (Abi header root dirs) = do
              else offset
 
 
+-- | Write 'Text'
 putTextStr :: Text -> B.Put
 putTextStr t = B.putByteString $ TxtE.encodeUtf8 t
 
 
+-- | Write a 'ElemPString'
 putPStr :: Text -> B.Put
 putPStr t = do
   B.putInt8 . fromIntegral $ Txt.length t
   B.putByteString $ TxtE.encodeUtf8 t
 
 
+-- | Write a 'Header'
 putHeader :: Header -> B.Put
 putHeader h = do
   putTextStr $ hName h
   B.putInt16be . fromIntegral $ hVersion h
 
 
+-- | Write a 'Directory'
 putDirectory :: Int -> Directory -> B.Put
 putDirectory dirOffset d = do
   let name = Txt.justifyLeft 4 ' ' . Txt.take 4 $ dTagName d
@@ -105,6 +131,7 @@ putDirectory dirOffset d = do
   B.putInt32be 0 -- reserved / datahandle
 
 
+-- | Create a 'Header'
 mkHeader :: Header
 mkHeader =
   Header { hName = "ABIF"
@@ -112,6 +139,7 @@ mkHeader =
          }
 
 
+-- | Create the root 'Directory' entry
 mkRoot :: Directory
 mkRoot = 
   Directory { dTagName = "tdir"
@@ -128,6 +156,7 @@ mkRoot =
                      }
   
 
+-- | Create a comment 'Directory' entry and 'ElemPString' data
 mkComment :: Text -> Directory
 mkComment comment' = 
   let comment = B.runPut . putPStr $ comment' in
@@ -145,6 +174,8 @@ mkComment comment' =
             , dDataSize = fromIntegral (BSL.length comment)
             } 
 
+
+-- | Create a sample name (SMPL) 'Directory' entry and 'ElemPString' data
 mkSampleName :: Text -> Directory
 mkSampleName sampleName' =
   let sampleName = B.runPut . putPStr $ sampleName' in
@@ -161,6 +192,7 @@ mkSampleName sampleName' =
             , dDataSize = fromIntegral (BSL.length sampleName)
             }
 
+-- | Create a base order (FWO_) 'Directory' entry data
 mkBaseOrder :: Base -> Base -> Base -> Base -> Directory
 mkBaseOrder w x y z =
   Directory { dTagName = "FWO_" -- Base order
@@ -182,6 +214,7 @@ mkBaseOrder w x y z =
     getBase BaseT = "T"
 
 
+-- | Create a lane (LANE) 'Directory' entry and data
 mkLane :: Int16 -> Directory
 mkLane lane =
   Directory { dTagName = "LANE" -- Lane or capliary number
@@ -198,6 +231,7 @@ mkLane lane =
             }
 
 
+-- | Create a called bases (PBAS) 'Directory' entry and data
 mkCalledBases :: Text -> Directory
 mkCalledBases fasta = 
   let
@@ -218,6 +252,7 @@ mkCalledBases fasta =
             }
 
 
+-- | Create a mobility file name (PDMF) 'Directory' entry and 'ElemPString' data
 mkMobilityFileName :: Int -> Text -> Directory
 mkMobilityFileName tagNum fileName =
   let pdfm = B.runPut $ putPStr fileName in
@@ -235,6 +270,7 @@ mkMobilityFileName tagNum fileName =
             }
 
 
+-- | Create a signal strength (S/N%) 'Directory' entry and data
 mkDyeSignalStrength :: Int16 -> Int16 -> Int16 -> Int16 -> Directory
 mkDyeSignalStrength w x y z =
   let sigStrength = B.runPut $ do
@@ -257,6 +293,7 @@ mkDyeSignalStrength w x y z =
             }
 
 
+-- | Create a peak locations (PLOC) 'Directory' entry and array of 'ElemShort' data
 mkPeakLocations :: [Int16] -> Directory
 mkPeakLocations locs =
   let peakLocations = B.runPut $ traverse_ B.putInt16be locs in
@@ -274,6 +311,7 @@ mkPeakLocations locs =
             }
 
 
+-- | Create a data (DATA) 'Directory' entry and array of 'ElemShort' data
 mkData :: Int -> [Int16] -> Directory
 mkData tagNum ds =
   let ds' = B.runPut $ traverse_ B.putInt16be ds in
@@ -290,6 +328,7 @@ mkData tagNum ds =
             , dElemNum = length ds
             }
 
+-- | Add a directory to an 'Abi'
 addDirectory :: Abi -> Directory -> Abi
 addDirectory abi dir =
   abi { aDirs = aDirs abi <> [dir] }

@@ -41,10 +41,10 @@ runDump =
       case Abi.getAbi file of
         Left e -> putText e
         Right (Abi.Abi hdr root dirs) -> do
-          let debugged = Abi.clean . Abi.getDebug <$> dirs 
+          let debugged = Abi.clear . Abi.getDebug <$> dirs 
           --colourPrint debugged 
           colourPrint hdr
-          colourPrint . Abi.clean $ root
+          colourPrint . Abi.clear $ root
           colourPrint debugged
 
           putText . Txt.intercalate "\n" $

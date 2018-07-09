@@ -1,7 +1,15 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
--- | Example showing how to remove all comments from a file
+{-|
+Description : Example showing how to remove all comments from a file
+Copyright   : (c) HyraxBio, 2018
+License     : BSD3
+Maintainer  : andre@hyraxbio.co.za, andre@andrevdm.com
+
+Example showing how to remove all comments from a file.
+See other examples in "Examples"
+-}
 module Examples.RemoveComments where
 
 import           Protolude
