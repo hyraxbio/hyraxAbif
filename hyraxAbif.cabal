@@ -1,8 +1,8 @@
 cabal-version:       2.2
-name:                hyraxAbi
-version:             0.2.3.1
+name:                hyraxAbif
+version:             0.2.3.2
 synopsis:            Modules for parsing, generating and manipulating AB1 files.
-homepage:            https://github.com/hyraxbio/hyraxAbi/#readme
+homepage:            https://github.com/hyraxbio/hyraxAbif/#readme
 license:             BSD-3-Clause
 license-file:        LICENSE
 author:              HyraxBio
@@ -12,25 +12,25 @@ category:            Bioinformatics
 build-type:          Simple
 extra-source-files:  README.md
 extra-doc-files:     docs/*.png
-description:         This library provides functionality for parsing, modifying, writing and generating ABI files
+description:         This library provides functionality for parsing, modifying, writing and generating ABIF files
                      <<docs/eg_multi_mix.png>>
                      .
                      Any AB1 file confirming to the standard at <http://www6.appliedbiosystems.com/support/software_community/ABIF_File_Format.pdf> should be supported.
                      .   
-                     This library also support generating a minimal ABI file from a FASTA input sequence.
+                     This library also support generating a minimal ABIF file from a FASTA input sequence.
                      .
-                     A basic terminal application that can dump and generate AB1s is included. See <https://github.com/hyraxbio/hyraxAbi/blob/master/app/Main.hs>
+                     A basic terminal application that can dump and generate AB1s is included. See <https://github.com/hyraxbio/hyraxAbif/blob/master/app/Main.hs>
                      .
                      See "Examples" directory
 
 library
   ghc-options:         -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wimplicit-prelude -Wcompat -Wredundant-constraints -Wnoncanonical-monad-instances
   hs-source-dirs:      src
-  exposed-modules:     Hyrax.Abi
-                     , Hyrax.Abi.Read
-                     , Hyrax.Abi.Write
-                     , Hyrax.Abi.Generate
-                     , Hyrax.Abi.Fasta
+  exposed-modules:     Hyrax.Abif
+                     , Hyrax.Abif.Read
+                     , Hyrax.Abif.Write
+                     , Hyrax.Abif.Generate
+                     , Hyrax.Abif.Fasta
                      , Examples
                      , Examples.AddComment
                      , Examples.RemoveComments
@@ -44,12 +44,12 @@ library
                      , filepath >= 1.4.1.2 && < 1.4.2.0
   default-language:    Haskell2010
 
-executable hyraxAbi-exe
+executable hyraxAbif-exe
   hs-source-dirs:      app
   main-is:             Main.hs
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wimplicit-prelude -Wcompat -Wredundant-constraints -Wnoncanonical-monad-instances
   build-depends:       base >= 4.9.1.0 && < 5
-                     , hyraxAbi
+                     , hyraxAbif
                      , protolude >= 0.2.2 && < 0.2.3
                      , text >= 1.2.3.0 && < 1.2.4.0
                      , bytestring >= 0.10.8.2 && < 0.10.9.0
@@ -57,18 +57,18 @@ executable hyraxAbi-exe
                      , hscolour >= 1.24.4 && < 1.25.0
   default-language:    Haskell2010
 
-test-suite hyraxAbi-test
+test-suite hyraxAbif-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Tests.hs
   build-depends:       base >= 4.9.1.0 && < 5
-                     , hyraxAbi
+                     , hyraxAbif
                      , protolude >= 0.2.2 && < 0.2.3
                      , text >= 1.2.3.0 && < 1.2.4.0
                      , bytestring >= 0.10.8.2 && < 0.10.9.0
                      , binary >= 0.8.5.1 && < 0.8.6.0
                      , hedgehog >= 0.5.3 && < 0.6.2
-  other-modules:       AbiTests
+  other-modules:       AbifTests
                      , FastaTests
                      , Generators
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wimplicit-prelude -Wcompat -Wredundant-constraints -Wnoncanonical-monad-instances
@@ -76,4 +76,4 @@ test-suite hyraxAbi-test
 
 source-repository head
   type:     git
-  location: https://github.com/hyraxbio/hyraxAbi
+  location: https://github.com/hyraxbio/hyraxAbif

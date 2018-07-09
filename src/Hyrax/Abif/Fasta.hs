@@ -2,7 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 {-|
-Module      : Hyax.Abi.Fasta
+Module      : Hyax.Abif.Fasta
 Description : Read a FASTA file
 Copyright   : (c) HyraxBio, 2018
 License     : BSD3
@@ -11,7 +11,7 @@ Stability   : beta
 
 Functionality for reading FASTA files
 -}
-module Hyrax.Abi.Fasta
+module Hyrax.Abif.Fasta
     ( Fasta (..)
     , parseFasta
     ) where
@@ -27,7 +27,7 @@ data Fasta = Fasta { fastaName :: !Text -- ^ Name
 
 -- | Parse the data for a single FASTA into a list of 'Fasta' values.
 -- Single and multi-line FASTAs are supported.
--- Used by "Hyrax.Abi.Generate" to read weighted-FASTAs
+-- Used by "Hyrax.Abif.Generate" to read weighted-FASTAs
 parseFasta :: Text -> Either Text [Fasta]
 parseFasta s =
   reverse <$> go (Txt.lines s) Nothing "" []

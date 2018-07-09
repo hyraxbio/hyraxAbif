@@ -20,14 +20,14 @@ Build with one of
 
 Run with
 
- - `stack exec hyraxAbi-exe -- -- dump` if you are using stack
- - `cabal new-run hyraxAbi-exe dump` if you are using cabal 2.x
+ - `stack exec hyraxAbif-exe -- -- dump` if you are using stack
+ - `cabal new-run hyraxAbif-exe dump` if you are using cabal 2.x
 
 ## Dump AB1
 
 To dump an existing AB1 run
 
- `hyraxAbi-exe dump example.ab1`
+ `hyraxAbif-exe dump example.ab1`
 
 This will output the structure of the AB1 like this
 
@@ -87,7 +87,7 @@ Selected data types have the "debug data" element populated. e.g. the PBAS (FAST
 
 To create an AB1 run
 
- `hyraxAbi-exe gen "./pathContainingFastas" "./pathForOutputAb1s"`
+ `hyraxAbif-exe gen "./pathContainingFastas" "./pathForOutputAb1s"`
 
 This will create an AB1 per input FASTA
 
@@ -229,11 +229,11 @@ _G
 
 # Using the modules
 
- - Hyrax.Abi: The core AB1 types
- - Hyrax.Abi.Fasta: A simple FASTA parser used when generating AB1s
- - Hyrax.Abi.Read: Module for parsing an existing AB1
- - Hyrax.Abi.Write: Module for writing a new AB1 file
- - Hyrax.Abi.Generate: Module for generating a minimal AB1 from a given FASTA input
+ - Hyrax.Abif: The core AB1 types
+ - Hyrax.Abif.Fasta: A simple FASTA parser used when generating AB1s
+ - Hyrax.Abif.Read: Module for parsing an existing AB1
+ - Hyrax.Abif.Write: Module for writing a new AB1 file
+ - Hyrax.Abif.Generate: Module for generating a minimal AB1 from a given FASTA input
 
 For a detailed overview of the code see *TODO* and the haddock documentation *TODO*
 
@@ -244,19 +244,19 @@ For now the terminal app (Main.hs) serves as an example and the best starting po
 
 
 ```
-import qualified Hyrax.Abi as Abi
-import qualified Hyrax.Abi.Read as Abi
-import qualified Hyrax.Abi.Write as Abi
+import qualified Hyrax.Abif as H
+import qualified Hyrax.Abif.Read as H
+import qualified Hyrax.Abif.Write as H
 
 addComment :: IO ()
 addComment = do
-  abi' <- Abi.readAbi "example.ab1"
+  abif' <- H.readAbif "example.ab1"
 
-  case abi' of
-    Left e -> putText $ "error reading ABI: " <> e
-    Right abi -> do
-      let modified = Abi.addDirectory abi $ Abi.mkComment "new comment"
-      Abi.writeAbi "example.modified.ab1" modified
+  case abif' of
+    Left e -> putText $ "error reading ABIF: " <> e
+    Right abif -> do
+      let modified = H.addDirectory abif $ H.mkComment "new comment"
+      H.writeAbif "example.modified.ab1" modified
 ```
 
 For additional examples see the Examples directory

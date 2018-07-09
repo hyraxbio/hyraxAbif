@@ -3,7 +3,7 @@
 {-# LANGUAGE MultiWayIf #-}
 
 {-|
-Module      : Hyax.Abi.Read
+Module      : Hyax.Abif.Read
 Description : Read and parse AB1 files
 Copyright   : (c) HyraxBio, 2018
 License     : BSD3
@@ -15,18 +15,18 @@ Functionality for reading and parsing AB1 files
 e.g.
 
 @
-abi' <- readAbi "example.ab1"
+abif' <- readAbif "example.ab1"
 
-case abi' of
-  Left e -> putStrLn $ "error reading ABI: " <> e
-  Right abi -> print $ clearAbi abi
+case abif' of
+  Left e -> putStrLn $ "error reading ABIF: " <> e
+  Right abif -> print $ clearAbif abif
 @
 -}
-module Hyrax.Abi.Read
-    ( readAbi
-    , getAbi
+module Hyrax.Abif.Read
+    ( readAbif
+    , getAbif
     , clear
-    , clearAbi
+    , clearAbif
     , getDebug
     , getPString
     , getCString
@@ -44,17 +44,17 @@ import qualified Data.Binary.Get as B
 import qualified Data.ByteString.Lazy as BSL
 import           Control.Monad.Fail (fail)
 
-import           Hyrax.Abi
+import           Hyrax.Abif
 
 
 -- | Read and parse an AB1 file
-readAbi :: FilePath -> IO (Either Text Abi)
-readAbi path = getAbi <$> BSL.readFile path
+readAbif :: FilePath -> IO (Either Text Abif)
+readAbif path = getAbif <$> BSL.readFile path
 
 
 -- | Parse an AB1 from a 'ByteString'
-getAbi :: BSL.ByteString -> Either Text Abi
-getAbi bs = do
+getAbif :: BSL.ByteString -> Either Text Abif
+getAbif bs = do
   (header, rootDir) <- case B.runGetOrFail (getRoot bs) bs of
                          Right (_, _, x) -> pure x
                          Left (_, _, e) -> Left ("Error reading root: " <> Txt.pack e)
@@ -65,17 +65,17 @@ getAbi bs = do
           Right (_, _, x) -> pure x
           Left (_, _, e) -> Left ("Error reading " <> show (dElemNum rootDir) <> " directories (at " <> show (dDataOffset rootDir) <> "): " <> Txt.pack e)
   
-  pure $ Abi header rootDir ds
+  pure $ Abif header rootDir ds
 
 
--- | Removes all data from the ABI's directories
-clearAbi :: Abi -> Abi
-clearAbi a = a { aRootDir = clear $ aRootDir a
+-- | Removes all data from the ABIF's directories
+clearAbif :: Abif -> Abif
+clearAbif a = a { aRootDir = clear $ aRootDir a
                , aDirs = clear <$> aDirs a
                }
 
 
--- | Removes all data from a directory entry. This will probably only be useful when trying to show an ABI value
+-- | Removes all data from a directory entry. This will probably only be useful when trying to show an ABIF value
 clear :: Directory -> Directory
 clear d = d { dData = "" }
 
@@ -188,7 +188,7 @@ getCString sz =
   TxtE.decodeUtf8 <$> B.getByteString (sz - 1)
 
 
--- | Parse the ABI 'Header'
+-- | Parse the ABIF 'Header'
 getHeader :: B.Get Header
 getHeader = 
   Header <$> (TxtE.decodeUtf8 <$> B.getByteString 4)

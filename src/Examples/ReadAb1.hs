@@ -2,27 +2,27 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 {-|
-Description : Example of reading a AB1 file
+Description : Example of reading a ABIF file
 Copyright   : (c) HyraxBio, 2018
 License     : BSD3
 Maintainer  : andre@hyraxbio.co.za, andre@andrevdm.com
 
-Example of reading a AB1 file.
+Example of reading a ABIF file.
 See other examples in "Examples"
 -}
 module Examples.ReadAb1 where
 
 import           Protolude
 
-import qualified Hyrax.Abi.Read as H
+import qualified Hyrax.Abif.Read as H
 
--- | Read and print a AB1 file
+-- | Read and print a ABIF file
 addComment :: IO ()
 addComment = do
-  abi' <- H.readAbi "example.ab1"
+  abif' <- H.readAbif "example.ab1"
 
-  case abi' of
-    Left e -> putStrLn $ "error reading ABI: " <> e
-    Right abi ->
+  case abif' of
+    Left e -> putStrLn $ "error reading ABIF: " <> e
+    Right abif ->
       -- Print after removing the data, to make it readable
-      print $ H.clearAbi abi
+      print $ H.clearAbif abif

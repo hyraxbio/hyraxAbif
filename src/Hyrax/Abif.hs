@@ -3,7 +3,7 @@
 {-# LANGUAGE MultiWayIf #-}
 
 {-|
-Module      : Hyax.Abi
+Module      : Hyax.Abif
 Description : Core AB1 types 
 Copyright   : (c) HyraxBio, 2018
 License     : BSD3
@@ -14,12 +14,12 @@ This module contains the core types for working with AB1 files.
 
 See
 
-  * <https://github.com/hyraxbio/hyraxAbi/#readme Source code on github>
+  * <https://github.com/hyraxbio/hyraxAbif/#readme Source code on github>
 
   * <http://www6.appliedbiosystems.com/support/software_community/ABIF_File_Format.pdf The ABIF spec>
 -}
-module Hyrax.Abi
-    ( Abi (..)
+module Hyrax.Abif
+    ( Abif (..)
     , Header (..)
     , Directory (..)
     , ElemType (..)
@@ -31,19 +31,19 @@ import           Protolude
 import qualified Data.ByteString.Lazy as BSL
 
 
--- | A single ABI
-data Abi = Abi { aHeader :: !Header
-               , aRootDir :: !Directory
-               , aDirs :: ![Directory]
-               } deriving (Show, Eq)
+-- | A single ABIF
+data Abif = Abif { aHeader :: !Header
+                 , aRootDir :: !Directory
+                 , aDirs :: ![Directory]
+                 } deriving (Show, Eq)
 
 
--- | ABI header
+-- | ABIF header
 data Header = Header { hName :: !Text
                      , hVersion :: !Int
                      } deriving (Show, Eq)
 
--- | ABI directory entry.
+-- | ABIF directory entry.
 -- The 'dData' field contains the data for the entry
 data Directory = Directory { dTagName :: !Text        -- ^ Tag name
                            , dTagNum :: !Int          -- ^ Tag number, see e.g. how DATA entries use this
@@ -55,9 +55,9 @@ data Directory = Directory { dTagName :: !Text        -- ^ Tag name
                            , dDataSize :: !Int        -- ^ Number of bytes in the data
                            , dDataOffset :: !Int      -- ^ Offset of this directory entry's data in the file. For data that is four
                                                       --    bytes or less, the data itself is stored in this field.
-                                                      --    This value will be recalculated when writing an ABI so you do not need to manually set it.
+                                                      --    This value will be recalculated when writing an ABIF so you do not need to manually set it.
                            , dData :: !BSL.ByteString -- ^ The entry's data
-                           , dDataDebug :: ![Text]    -- ^ Optinal debug data, populated by 'Hyrax.Abi.Read.getDebug' when a ABI is parsed
+                           , dDataDebug :: ![Text]    -- ^ Optinal debug data, populated by 'Hyrax.Abif.Read.getDebug' when a ABIF is parsed
                            } deriving (Show, Eq)
 
 

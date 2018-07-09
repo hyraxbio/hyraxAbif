@@ -2,7 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 {-|
-Module      : Hyax.Abi.Write
+Module      : Hyax.Abif.Write
 Description : Functionality for writing AB1 files
 Copyright   : (c) HyraxBio, 2018
 License     : BSD3
@@ -10,12 +10,12 @@ Maintainer  : andre@hyraxbio.co.za, andre@andrevdm.com
 Stability   : beta
 
 Functionality for writing AB1 files.
-See 'Hyrax.Abi.Generate.generateAb1' for an example of how to create an 'Ab1'
+See 'Hyrax.Abif.Generate.generateAb1' for an example of how to create an 'Ab1'
 -}
-module Hyrax.Abi.Write
-    ( createAbiBytes
-    , writeAbi
-    , putAbi
+module Hyrax.Abif.Write
+    ( createAbifBytes
+    , writeAbif
+    , putAbif
     , putTextStr
     , putHeader
     , putDirectory
@@ -42,28 +42,28 @@ import qualified Data.Binary.Put as B
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
 
-import           Hyrax.Abi
+import           Hyrax.Abif
 
 -- | Used to specify the base order for the FWO directry entry, see 'mkBaseOrder'
 data Base = BaseA | BaseC | BaseG | BaseT
 
 
--- | Write an 'Abi' to a 'ByteString'
-createAbiBytes :: Abi -> BSL.ByteString
-createAbiBytes ab1 =
-  B.runPut (putAbi ab1)
+-- | Write an 'Abif' to a 'ByteString'
+createAbifBytes :: Abif -> BSL.ByteString
+createAbifBytes ab1 =
+  B.runPut (putAbif ab1)
 
   
--- | Write an 'Abi' to a file
-writeAbi :: FilePath -> Abi -> IO ()
-writeAbi destPath ab1 = do
-  let b = createAbiBytes ab1
+-- | Write an 'Abif' to a file
+writeAbif :: FilePath -> Abif -> IO ()
+writeAbif destPath ab1 = do
+  let b = createAbifBytes ab1
   BS.writeFile destPath $ BSL.toStrict b
 
   
--- | Create the 'Abi' using "Data.Binary"
-putAbi :: Abi -> B.Put
-putAbi (Abi header root dirs) = do
+-- | Create the 'Abif' using "Data.Binary"
+putAbif :: Abif -> B.Put
+putAbif (Abif header root dirs) = do
   -- Data starts at offset 128
   let startDataOffset = 128
   -- Total data size
@@ -328,7 +328,7 @@ mkData tagNum ds =
             , dElemNum = length ds
             }
 
--- | Add a directory to an 'Abi'
-addDirectory :: Abi -> Directory -> Abi
-addDirectory abi dir =
-  abi { aDirs = aDirs abi <> [dir] }
+-- | Add a directory to an 'Abif'
+addDirectory :: Abif -> Directory -> Abif
+addDirectory abif dir =
+  abif { aDirs = aDirs abif <> [dir] }

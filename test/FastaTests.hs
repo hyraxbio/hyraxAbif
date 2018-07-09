@@ -8,7 +8,7 @@ import           Protolude
 import           Hedgehog
 import qualified Hedgehog.Gen as Gen
 
-import qualified Hyrax.Abi.Fasta as F
+import qualified Hyrax.Abif.Fasta as F
 import           Generators
 
 -- | Test fasta parsing

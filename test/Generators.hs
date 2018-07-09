@@ -9,7 +9,7 @@ import           Hedgehog
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
 
-import qualified Hyrax.Abi.Fasta as F
+import qualified Hyrax.Abif.Fasta as F
 
 -- | Generate random set of nucleotides, including ambiguous ones
 nucsGen :: GenT Identity Text

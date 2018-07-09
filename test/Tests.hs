@@ -4,7 +4,7 @@ import           Protolude
 import qualified System.IO as IO
 import           System.Exit (exitFailure)
 
-import qualified AbiTests
+import qualified AbifTests
 import qualified FastaTests
 
 main :: IO ()
@@ -12,7 +12,7 @@ main = do
   IO.hSetBuffering IO.stdout IO.LineBuffering
   IO.hSetBuffering IO.stderr IO.LineBuffering
 
-  results <- sequence [ AbiTests.tests
+  results <- sequence [ AbifTests.tests
                       , FastaTests.tests
                       ]
 

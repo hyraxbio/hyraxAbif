@@ -2,7 +2,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module AbiTests (tests) where
+module AbifTests (tests) where
 
 
 import           Protolude
@@ -14,10 +14,10 @@ import qualified Data.Binary.Get as B
 import qualified Data.ByteString.Lazy as BSL
 import           Hedgehog
 
-import qualified Hyrax.Abi as H
-import qualified Hyrax.Abi.Read as H
-import qualified Hyrax.Abi.Write as H
-import qualified Hyrax.Abi.Generate as H
+import qualified Hyrax.Abif as H
+import qualified Hyrax.Abif.Read as H
+import qualified Hyrax.Abif.Write as H
+import qualified Hyrax.Abif.Generate as H
 import           Generators
 
 -- | Test that an ab1 (write, read, write, read) results in the original data
@@ -28,10 +28,10 @@ prop_roundtrip = property $ do
 
   wfasta <- evalEither $ H.readWeightedFasta fasta
   let ab1Written1 = H.generateAb1 ("test", wfasta)
-  ab1Read1 <- evalEither $ H.getAbi ab1Written1
+  ab1Read1 <- evalEither $ H.getAbif ab1Written1
 
-  let ab1Written2 = H.createAbiBytes ab1Read1
-  ab1Read2 <- evalEither $ H.getAbi ab1Written2
+  let ab1Written2 = H.createAbifBytes ab1Read1
+  ab1Read2 <- evalEither $ H.getAbif ab1Written2
 
   ab1Read1 === ab1Read2
   
@@ -46,7 +46,7 @@ prop_readPeaks = property $ do
 
   wfasta <- evalEither $ H.readWeightedFasta fasta
   let ab1Written = H.generateAb1 ("test", wfasta)
-  ab1 <- evalEither $ H.getAbi ab1Written
+  ab1 <- evalEither $ H.getAbif ab1Written
 
   -- Get the peak locations
   peaks <- evalEither $ readShorts <$> getDirEntry ab1 "PLOC"  1
@@ -81,7 +81,7 @@ prop_readPeaks = property $ do
         ((n,_) : _) -> n
         _ -> '?'
     
-    readDataPeaks :: H.Abi -> Int -> [Int] -> Either Text [Int]
+    readDataPeaks :: H.Abif -> Int -> [Int] -> Either Text [Int]
     readDataPeaks ab1 dirNum peaks =
       case readShorts <$> getDirEntry ab1 "DATA" dirNum of
         Left e -> Left e
@@ -90,7 +90,7 @@ prop_readPeaks = property $ do
           maybeToRight "peaks" $ sequenceA valsAtPeaks
   
 
-getDirEntry :: H.Abi -> Text -> Int -> Either Text BSL.ByteString
+getDirEntry :: H.Abif -> Text -> Int -> Either Text BSL.ByteString
 getDirEntry ab1 dirName dirNum =
   let r = filter (\d -> H.dTagNum d == dirNum && H.dTagName d == dirName) $ H.aDirs ab1 in
   case r of

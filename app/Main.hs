@@ -12,9 +12,9 @@ import qualified System.Environment as Env
 import qualified Language.Haskell.HsColour as Clr
 import qualified Language.Haskell.HsColour.Colourise as Clr
 
-import qualified Hyrax.Abi as Abi
-import qualified Hyrax.Abi.Read as Abi
-import qualified Hyrax.Abi.Generate as Abi
+import qualified Hyrax.Abif as H
+import qualified Hyrax.Abif.Read as H
+import qualified Hyrax.Abif.Generate as H
 
 main :: IO ()
 main = do
@@ -29,7 +29,7 @@ main = do
 runGenerateAb1 :: IO ()
 runGenerateAb1 =
   Env.getArgs >>= \case
-    [_, source, dest] -> Abi.generateAb1s source dest
+    [_, source, dest] -> H.generateAb1s source dest
     _ -> putText "Expecting `source dest` args"
   
 
@@ -38,24 +38,24 @@ runDump =
   Env.getArgs >>= \case
     [_, path] -> do
       file <- BSL.readFile path
-      case Abi.getAbi file of
+      case H.getAbif file of
         Left e -> putText e
-        Right (Abi.Abi hdr root dirs) -> do
-          let debugged = Abi.clear . Abi.getDebug <$> dirs 
+        Right (H.Abif hdr root dirs) -> do
+          let debugged = H.clear . H.getDebug <$> dirs 
           --colourPrint debugged 
           colourPrint hdr
-          colourPrint . Abi.clear $ root
+          colourPrint . H.clear $ root
           colourPrint debugged
 
           putText . Txt.intercalate "\n" $
-            (\d -> Abi.dTagName d
-              <> " {" <> Abi.dElemTypeDesc d <> "} tagNum="
-              <> show (Abi.dTagNum d)
-              <> " size=" <> show (Abi.dElemSize d)
-              <> " count=" <> show (Abi.dElemNum d)
-              <> " offset=" <> show (Abi.dDataOffset d)
+            (\d -> H.dTagName d
+              <> " {" <> H.dElemTypeDesc d <> "} tagNum="
+              <> show (H.dTagNum d)
+              <> " size=" <> show (H.dElemSize d)
+              <> " count=" <> show (H.dElemNum d)
+              <> " offset=" <> show (H.dDataOffset d)
               <> "  "
-              <> show (Abi.dDataDebug d)
+              <> show (H.dDataDebug d)
             ) <$> debugged
     _ ->
       putText "Expecting path to ab1"
