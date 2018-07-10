@@ -148,7 +148,7 @@ Results in the following weighted nucleotide per position
 ACTG
 ```
 
-![](docs/eg_actg.png)
+![](docs/docs/eg_actg.png)
 
 
 Here there is a single FASTA with a single read with a weigh of 1 (100%). The chromatogram for this AB1 shows perfect traces for the input `ACTG` nucleotides
@@ -169,7 +169,7 @@ ACAG
 ACTG
 ```
 
-![](docs/eg_acag_acgt.png)
+![](docs/docs/eg_acag_acgt.png)
 
 Two input FASTA files both with a weigh of 1. You can see in the second trace that the third nucleotide is a `T` (the trace is green). Exactly what the base-calling software (phred & recall etc) decide to call the base as depends on your settings and software choices.
 
@@ -189,7 +189,7 @@ ACAG
 ACTG
 ```
 
-![](docs/eg_acag_acgt03.png)
+![](docs/docs/eg_acag_acgt03.png)
 
 Here the second fasta has a weight of 0.3 and you can see the traces are 30% of the height of the top ones.
 
@@ -206,7 +206,7 @@ ACAG
 ACTG
 ```
 
-![](docs/eg_acag_acgt_mix.png)
+![](docs/docs/eg_acag_acgt_mix.png)
 
 The single input FASTA has an `AT` mix at the third nucleotide. The first read has a weight of 1 and the second a weight of 0.3.
 Notice that the maximum weight is 1, e.g. the first `A` has the same intensity as the second even though the first one has the reads weighted both 1 and 0.3
@@ -226,7 +226,7 @@ _GT
 _G
 ```
 
-![](docs/eg_multi_mix.png)
+![](docs/docs/eg_multi_mix.png)
 
 ---
 
