@@ -1,4 +1,4 @@
-package = hyraxAbi
+package = hyraxAbif
 stack_yaml = STACK_YAML="stack.yaml"
 stack = $(stack_yaml) stack
 
