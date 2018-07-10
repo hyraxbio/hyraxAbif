@@ -15,7 +15,7 @@ extra-doc-files:     docs/*.png
 description:         This library provides functionality for parsing, modifying, writing and generating ABIF files
                      <<docs/eg_multi_mix.png>>
                      .
-                     Any AB1 file confirming to the standard at <http://www6.appliedbiosystems.com/support/software_community/ABIF_File_Format.pdf> should be supported.
+                     Any AB1 file conforming to the standard at <http://www6.appliedbiosystems.com/support/software_community/ABIF_File_Format.pdf> should be supported.
                      .   
                      This library also support generating a minimal ABIF file from a FASTA input sequence.
                      .
