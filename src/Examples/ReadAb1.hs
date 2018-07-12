@@ -17,8 +17,8 @@ import           Protolude
 import qualified Hyrax.Abif.Read as H
 
 -- | Read and print a ABIF file
-addComment :: IO ()
-addComment = do
+readAbif :: IO ()
+readAbif = do
   abif' <- H.readAbif "example.ab1"
 
   case abif' of
