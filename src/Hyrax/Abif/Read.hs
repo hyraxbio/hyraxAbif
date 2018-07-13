@@ -47,11 +47,14 @@ import           Control.Monad.Fail (fail)
 import           Hyrax.Abif
 
 
+{-! SECTION< read_readAbif !-}
 -- | Read and parse an AB1 file
 readAbif :: FilePath -> IO (Either Text Abif)
 readAbif path = getAbif <$> BSL.readFile path
+{-! SECTION> read_readAbif !-}
 
 
+{-! SECTION< read_getAbif !-}
 -- | Parse an AB1 from a 'ByteString'
 getAbif :: BSL.ByteString -> Either Text Abif
 getAbif bs = do
@@ -63,9 +66,14 @@ getAbif bs = do
   
   ds <- case B.runGetOrFail (getDirectories bs [] $ dElemNum rootDir) dirBytes of
           Right (_, _, x) -> pure x
-          Left (_, _, e) -> Left ("Error reading " <> show (dElemNum rootDir) <> " directories (at " <> show (dDataOffset rootDir) <> "): " <> Txt.pack e)
+          Left (_, _, e) -> Left ("Error reading "
+                                  <> show (dElemNum rootDir)
+                                  <> " directories (at " <> show (dDataOffset rootDir) <> "): "
+                                  <> Txt.pack e
+                                 )
   
   pure $ Abif header rootDir ds
+{-! SECTION> read_getAbif !-}
 
 
 -- | Removes all data from the ABIF's directories

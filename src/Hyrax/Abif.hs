@@ -18,6 +18,7 @@ See
 
   * <http://www6.appliedbiosystems.com/support/software_community/ABIF_File_Format.pdf The ABIF spec>
 -}
+{-! SECTION< abif_module !-}
 module Hyrax.Abif
     ( Abif (..)
     , Header (..)
@@ -29,8 +30,10 @@ module Hyrax.Abif
 
 import           Protolude
 import qualified Data.ByteString.Lazy as BSL
+{-! SECTION> abif_module !-}
 
 
+{-! SECTION< abif_type !-}
 -- | A single ABIF
 data Abif = Abif { aHeader :: !Header
                  , aRootDir :: !Directory
@@ -59,8 +62,10 @@ data Directory = Directory { dTagName :: !Text        -- ^ Tag name
                            , dData :: !BSL.ByteString -- ^ The entry's data
                            , dDataDebug :: ![Text]    -- ^ Optinal debug data, populated by 'Hyrax.Abif.Read.getDebug' when a ABIF is parsed
                            } deriving (Show, Eq)
+{-! SECTION> abif_type !-}
 
 
+{-! SECTION< abif_elemType !-}
 -- | Type of the elements in a directory entry. See the spec for details on each type if required.
 data ElemType = ElemUnknown
               | ElemCustom
@@ -122,3 +127,4 @@ describeElemType  256 = (ElemLZWCompUnsupported,        "LZWComp (*unsupported*)
 describeElemType  384 = (ElemCompressedDataUnsupported, "Compressed Data (*unsupported*)")
 describeElemType 1023 = (ElemRoot, "root")
 describeElemType    v = if v >= 1024 then (ElemCustom, "custom") else (ElemUnknown, "unknown")
+{-! SECTION> abif_elemType !-}
