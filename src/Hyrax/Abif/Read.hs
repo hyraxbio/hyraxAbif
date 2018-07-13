@@ -76,18 +76,21 @@ getAbif bs = do
 {-! SECTION> read_getAbif !-}
 
 
+{-! SECTION< read_clear !-}
 -- | Removes all data from the ABIF's directories
 clearAbif :: Abif -> Abif
 clearAbif a = a { aRootDir = clear $ aRootDir a
-               , aDirs = clear <$> aDirs a
-               }
+                , aDirs = clear <$> aDirs a
+                }
 
 
 -- | Removes all data from a directory entry. This will probably only be useful when trying to show an ABIF value
 clear :: Directory -> Directory
 clear d = d { dData = "" }
+{-! SECTION> read_clear !-}
 
 
+{-! SECTION< read_getDebug !-}
 -- | Populate the directory entry with debug data (into 'dDataDebug').
 -- This is done for selected types only, e.g. for strings so that printing the structure will display
 -- readable/meaningfull info
@@ -107,6 +110,7 @@ getDebug d =
       if dDataSize d <= 4
       then d { dDataDebug = [TxtE.decodeUtf8 . BSL.toStrict . BSL.take (fromIntegral $ dDataSize d - 1) $ dData d] }
       else d { dDataDebug = [B.runGet (lbl . getCString $ dDataSize d) bsAtOffset] }
+{-! SECTION> read_getDebug !-}
 
     y ->
       -- For non-array entries
@@ -186,6 +190,7 @@ getDebug d =
         pure (c:cs)
 
 
+{-! SECTION< read_getStrings !-}
 -- | Parse a 'ElemPString'
 getPString :: B.Get Text
 getPString = do
@@ -197,23 +202,29 @@ getPString = do
 getCString :: Int -> B.Get Text
 getCString sz = 
   TxtE.decodeUtf8 <$> B.getByteString (sz - 1)
+{-! SECTION> read_getStrings !-}
 
 
+{-! SECTION< read_getHeader !-}
 -- | Parse the ABIF 'Header'
 getHeader :: B.Get Header
 getHeader = 
   Header <$> (TxtE.decodeUtf8 <$> B.getByteString 4)
          <*> (fromIntegral <$> B.getInt16be)
+{-! SECTION> read_getHeader !-}
 
 
+{-! SECTION< read_getRoot !-}
 -- | Parse the root ('Header' and 'Directory')
 getRoot :: BSL.ByteString -> B.Get (Header, Directory)
 getRoot bs = do
   h <- getHeader
   rd <- getDirectory bs
   pure (h, rd)
+{-! SECTION> read_getRoot !-}
 
 
+{-! SECTION< read_getDirectory !-}
 -- | Parse a single 'Directory' entry and read its data
 getDirectory :: BSL.ByteString -> B.Get Directory
 getDirectory bs = do
@@ -232,7 +243,14 @@ getDirectory bs = do
                     then pure $ BSL.take (fromIntegral dataSize) offsetDataBytes
                     else case B.runGetOrFail (B.getLazyByteString $ fromIntegral dataSize) $ BSL.drop (fromIntegral dataOffset) bs of
                            Right (_, _, x) -> pure x
-                           Left (_, _, e) -> fail $ "error reading data (" <> show dataSize <> " bytes starting at " <> show dataOffset <> ") for directory entry '" <> Txt.unpack tagName <> "': " <> e
+                           Left (_, _, e) -> fail $ "error reading data ("
+                                                    <> show dataSize
+                                                    <> " bytes starting at "
+                                                    <> show dataOffset
+                                                    <> ") for directory entry '"
+                                                    <> Txt.unpack tagName
+                                                    <> "': "
+                                                    <> e
 
   let (elemType, elemCode) = describeElemType typeCode
   pure Directory { dTagName = tagName 
@@ -247,8 +265,10 @@ getDirectory bs = do
                  , dData = dataBytes 
                  , dDataDebug = []
                  } 
+{-! SECTION> read_getDirectory !-}
 
 
+{-! SECTION< read_getDirectories !-}
 -- | Parse all the directoy entries
 getDirectories :: BSL.ByteString -> [Directory] -> Int -> B.Get [Directory]
 getDirectories _ acc 0 = pure acc
@@ -257,4 +277,4 @@ getDirectories bs acc more = do
   B.skip 4 -- Skip the reserved field
   getDirectories bs (acc <> [d]) (more - 1)
 
-
+{-! SECTION> read_getDirectories !-}
