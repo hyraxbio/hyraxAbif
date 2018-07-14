@@ -271,17 +271,18 @@ readWeightedFasta fastaData =
 
   
 
+{-! SECTION< gen_readWeightedFastas !-}
 -- | Read all FASTA files in a directory
 --
 -- The result data has the type
 -- 
 -- @
---                     [ ('Text', [('Double', 'Text')]) ]
---                        ^       ^       ^
---                        |       |       |
--- file name -------------+       |       +---- read 
---                                | 
---                                +---- weight
+--                    [ ('Text', [('Double', 'Text')]) ]
+--                        ^         ^         ^
+--                        |         |         |
+-- file name -------------+         |         +---- read 
+--                                  | 
+--                                  +---- weight
 -- @
 --
 readWeightedFastas :: FilePath -> IO (Either Text [(Text, [(Double, Text)])])
@@ -293,6 +294,7 @@ readWeightedFastas source = do
   case sequenceA $ readWeightedFasta <$> contents of
     Left e -> pure . Left $ e
     Right rs -> pure . Right $ zip names rs
+{-! SECTION> gen_readWeightedFastas !-}
 
   
 -- | Find all files in a directory

@@ -19,6 +19,7 @@ module Hyrax.Abif.Fasta
 import           Protolude
 import qualified Data.Text as Txt
 
+{-! SECTION< fasta !-}
 -- | FASTA data
 data Fasta = Fasta { fastaName :: !Text -- ^ Name
                    , fastaRead :: !Text -- ^ Data
@@ -48,3 +49,4 @@ parseFasta s =
       Left "Expecting read"
     go [] (Just name) read acc =
       Right $ Fasta (Txt.strip name) read : acc
+{-! SECTION> fasta !-}
