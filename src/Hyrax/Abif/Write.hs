@@ -44,8 +44,10 @@ import qualified Data.ByteString.Lazy as BSL
 
 import           Hyrax.Abif
 
+{-! SECTION< write_base !-}
 -- | Used to specify the base order for the FWO directry entry, see 'mkBaseOrder'
 data Base = BaseA | BaseC | BaseG | BaseT
+{-! SECTION> write_base !-}
 
 
 {-! SECTION< write_create !-}
@@ -97,6 +99,7 @@ putAbif (Abif header root dirs) = do
 {-! SECTION> write_putAbif !-}
 
 
+{-! SECTION< write_strings !-}
 -- | Write 'Text'
 putTextStr :: Text -> B.Put
 putTextStr t = B.putByteString $ TxtE.encodeUtf8 t
@@ -107,15 +110,19 @@ putPStr :: Text -> B.Put
 putPStr t = do
   B.putInt8 . fromIntegral $ Txt.length t
   B.putByteString $ TxtE.encodeUtf8 t
+{-! SECTION> write_strings !-}
 
 
+{-! SECTION< write_putHeader !-}
 -- | Write a 'Header'
 putHeader :: Header -> B.Put
 putHeader h = do
   putTextStr $ hName h
   B.putInt16be . fromIntegral $ hVersion h
+{-! SECTION> write_putHeader !-}
 
 
+{-! SECTION< write_putDirectory !-}
 -- | Write a 'Directory'
 putDirectory :: Int -> Directory -> B.Put
 putDirectory dirOffset d = do
@@ -133,6 +140,7 @@ putDirectory dirOffset d = do
     else B.putLazyByteString . BSL.take 4 $ dData d <> "\0\0\0\0"
 
   B.putInt32be 0 -- reserved / datahandle
+{-! SECTION> write_putDirectory !-}
 
 
 -- | Create a 'Header'
@@ -196,6 +204,7 @@ mkSampleName sampleName' =
             , dDataSize = fromIntegral (BSL.length sampleName)
             }
 
+{-! SECTION< write_mk !-}
 -- | Create a base order (FWO_) 'Directory' entry data
 mkBaseOrder :: Base -> Base -> Base -> Base -> Directory
 mkBaseOrder w x y z =
@@ -233,6 +242,7 @@ mkLane lane =
             , dData = B.runPut $ B.putInt16be lane
             , dDataDebug = []
             }
+{-! SECTION> write_mk !-}
 
 
 -- | Create a called bases (PBAS) 'Directory' entry and data
@@ -332,7 +342,9 @@ mkData tagNum ds =
             , dElemNum = length ds
             }
 
+{-! SECTION< write_addDirectory !-}
 -- | Add a directory to an 'Abif'
 addDirectory :: Abif -> Directory -> Abif
 addDirectory abif dir =
   abif { aDirs = aDirs abif <> [dir] }
+{-! SECTION> write_addDirectory !-}
