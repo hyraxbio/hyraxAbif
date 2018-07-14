@@ -48,6 +48,7 @@ import           Hyrax.Abif
 data Base = BaseA | BaseC | BaseG | BaseT
 
 
+{-! SECTION< write_create !-}
 -- | Write an 'Abif' to a 'ByteString'
 createAbifBytes :: Abif -> BSL.ByteString
 createAbifBytes ab1 =
@@ -59,8 +60,10 @@ writeAbif :: FilePath -> Abif -> IO ()
 writeAbif destPath ab1 = do
   let b = createAbifBytes ab1
   BS.writeFile destPath $ BSL.toStrict b
+{-! SECTION> write_create !-}
 
   
+{-! SECTION< write_putAbif !-}
 -- | Create the 'Abif' using "Data.Binary"
 putAbif :: Abif -> B.Put
 putAbif (Abif header root dirs) = do
@@ -91,6 +94,7 @@ putAbif (Abif header root dirs) = do
       pure $ if dDataSize dir > 4
              then offset + dDataSize dir
              else offset
+{-! SECTION> write_putAbif !-}
 
 
 -- | Write 'Text'
