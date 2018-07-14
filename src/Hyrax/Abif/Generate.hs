@@ -196,8 +196,7 @@ generateTraceData weighted =
       wave
 
 
--- | Read a weighted FASTA file. See the module comments for the expected format.
--- See the module documentation for details on the format of the weighted FASTA 
+-- | Read a weighted FASTA file. See the module documentation for details on the format of the weighted FASTA 
 --
 -- e.g. weighted FASTA
 --
