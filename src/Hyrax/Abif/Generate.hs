@@ -213,12 +213,12 @@ generateTraceData weighted =
 -- The result data has the type
 -- 
 -- @
---                       ('Text', [('Double', 'Text')])
---                        ^       ^       ^
---                        |       |       |
--- file name -------------+       |       +---- read 
---                                | 
---                                +---- weight
+--   [('Double', 'Text')]
+--     ^        ^
+--     |        |
+--     |        +---- read 
+--     | 
+--     +---- weight
 -- @
 --
 readWeightedFasta :: ByteString -> Either Text [(Double, Text)]
@@ -243,6 +243,18 @@ readWeightedFasta fastaData =
   
 
 -- | Read all FASTA files in a directory
+--
+-- The result data has the type
+-- 
+-- @
+--                     [ ('Text', [('Double', 'Text')]) ]
+--                        ^       ^       ^
+--                        |       |       |
+-- file name -------------+       |       +---- read 
+--                                | 
+--                                +---- weight
+-- @
+--
 readWeightedFastas :: FilePath -> IO (Either Text [(Text, [(Double, Text)])])
 readWeightedFastas source = do
   files <- filter (Txt.isSuffixOf ".fasta" . Txt.pack) <$> getFiles source
