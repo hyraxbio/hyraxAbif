@@ -127,6 +127,7 @@ generateAb1s source dest = do
       traverse_ (\(name, ab1) -> BS.writeFile (dest </> Txt.unpack name <> ".ab1") $ BSL.toStrict ab1) ab1s
 
 
+{-! SECTION< gen_generateAb1 !-}
 -- | Create the 'ByteString' data for an AB1 given the data from a weighted FASTA (see 'readWeightedFasta')
 generateAb1 :: (Text, [(Double, Text)]) -> BSL.ByteString
 generateAb1 (fName, sourceFasta) = 
@@ -168,6 +169,7 @@ generateAb1 (fName, sourceFasta) =
   in
   -- Generate the data
   B.runPut (putAbif abif)
+{-! SECTION> gen_generateAb1 !-}
 
 
 -- | Generate the traces for the AB1 from the parsed weighted FASTA
@@ -238,6 +240,7 @@ generateTraceData weighted =
 --     +---- weight
 -- @
 --
+{-! SECTION< gen_readWeightedFasta !-}
 readWeightedFasta :: ByteString -> Either Text [(Double, Text)]
 readWeightedFasta fastaData = 
   case parseFasta $ TxtE.decodeUtf8 fastaData of
@@ -264,6 +267,7 @@ readWeightedFasta fastaData =
       case (readMaybe . Txt.unpack $ hdr :: Maybe Double) of
         Just weight -> Right (min 1 . max 0 $ weight, processNucs $ Txt.strip dta)
         Nothing -> Left $ "Invalid header reading, expecting numeric weight, got: " <> hdr
+{-! SECTION> gen_readWeightedFasta !-}
 
   
 
