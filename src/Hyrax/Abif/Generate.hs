@@ -127,7 +127,7 @@ generateAb1s source dest = do
       traverse_ (\(name, ab1) -> BS.writeFile (dest </> Txt.unpack name <> ".ab1") $ BSL.toStrict ab1) ab1s
 
 
-{-! SECTION< gen_generateAb1 !-}
+{-! SECTION< gen_generateAb1_fn !-}
 -- | Create the 'ByteString' data for an AB1 given the data from a weighted FASTA (see 'readWeightedFasta')
 generateAb1 :: (Text, [(Double, Text)]) -> BSL.ByteString
 generateAb1 (fName, sourceFasta) = 
@@ -136,14 +136,17 @@ generateAb1 (fName, sourceFasta) =
     valsPerBase = trValsPerBase tr
     generatedFastaLen = (Txt.length $ trFasta tr)
 
+{-! SECTION< gen_generateAb1_peak !-}
     -- The point that is the peak of the trace, i.e. mid point of trace for a single base
     midPeek = valsPerBase `div` 2
     -- Get the peak locations for all bases
     peakLocations = take generatedFastaLen [midPeek, valsPerBase + midPeek..]
+{-! SECTION> gen_generateAb1_peak !-}
 
     -- Sample name (from the FASTA name)
     sampleName = fst . Txt.breakOn "_" $ fName
 
+{-! SECTION< gen_generateAb1_abif !-}
     -- Create the ABIF directories
     dirs = [ mkData  9 $ trData09G tr -- G
            , mkData 10 $ trData10A tr -- A
@@ -165,34 +168,48 @@ generateAb1 (fName, sourceFasta) =
                 , aRootDir = mkRoot
                 , aDirs = dirs
                 }
+{-! SECTION> gen_generateAb1_abif !-}
             
   in
   -- Generate the data
   B.runPut (putAbif abif)
-{-! SECTION> gen_generateAb1 !-}
+{-! SECTION> gen_generateAb1_fn !-}
 
 
+{-! SECTION< gen_generateTraceData !-}
+{-! SECTION< gen_generateTraceData_type !-}
 -- | Generate the traces for the AB1 from the parsed weighted FASTA
 generateTraceData :: [(Double, Text)] -> TraceData
 generateTraceData weighted =
+{-! SECTION> gen_generateTraceData_type !-}
   let
+{-! SECTION< gen_generateTraceData_weighted !-}
     weightedNucs' = (\(w, ns) -> (w,) . unIupac <$> Txt.unpack ns) <$> weighted
     weightedNucs = Lst.transpose weightedNucs'
+{-! SECTION> gen_generateTraceData_weighted !-}
   
-    -- Values for a base that was present. This defines the shape of the chromatogram curve, and defines the number of values per base
+{-! SECTION< gen_generateTraceData_curve !-}
+    -- Values for a base that was present. This defines the shape of the chromatogram curve,
+    --  and defines the number of values per base
     curve = [0, 0, 128, 512, 1024, 1024, 512, 128, 0, 0]
     valsPerBase = length curve
+{-! SECTION> gen_generateTraceData_curve !-}
 
+{-! SECTION< gen_generateTraceData_traces !-}
     -- Create the G, A, T and C traces
     data09G = concat $ getWeightedTrace curve 'G' <$> weightedNucs
     data10A = concat $ getWeightedTrace curve 'A' <$> weightedNucs
     data11T = concat $ getWeightedTrace curve 'T' <$> weightedNucs
     data12C = concat $ getWeightedTrace curve 'C' <$> weightedNucs
+{-! SECTION> gen_generateTraceData_traces !-}
 
+{-! SECTION< gen_generateTraceData_fasta !-}
     -- Create fasta sequence for the trace
     fastaSeq = concat <$> (snd <<$>> weightedNucs)
     fasta = Txt.pack $ iupac fastaSeq
+{-! SECTION> gen_generateTraceData_fasta !-}
   in      
+{-! SECTION< gen_generateTraceData_ret !-}
   TraceData { trData09G = data09G
             , trData10A = data10A
             , trData11T = data11T
@@ -200,8 +217,10 @@ generateTraceData weighted =
             , trFasta = fasta
             , trValsPerBase = valsPerBase
             }
+{-! SECTION> gen_generateTraceData_ret !-}
 
   where
+{-! SECTION< gen_generateTraceData_getWeightedTrace !-}
     getWeightedTrace :: [Int] -> Char -> [(Double, [Char])] -> [Int16]
     getWeightedTrace curve nuc ws =
       let
@@ -211,6 +230,8 @@ generateTraceData weighted =
         wave = floor . (score *) . fromIntegral <$> curve
       in
       wave
+{-! SECTION> gen_generateTraceData_getWeightedTrace !-}
+{-! SECTION> gen_generateTraceData !-}
 
 
 -- | Read a weighted FASTA file. See the module documentation for details on the format of the weighted FASTA 
@@ -304,8 +325,11 @@ getFiles p = do
   filterM Dir.doesFileExist entries
 
 
+{-! SECTION< gen_unIupac_fn !-}
 -- | Convert a IUPAC ambiguity code to the set of nucleotides it represents
+{-! SECTION< gen_unIupac_type !-}
 unIupac :: Char -> [Char]
+{-! SECTION> gen_unIupac_type !-}
 unIupac c =
   case c of
     'T' -> "T"
@@ -328,6 +352,7 @@ unIupac c =
   
     'X' -> "GATC"
     _   -> ""
+{-! SECTION> gen_unIupac_fn !-}
 
 
 -- | Given a set of nucleotides get the IUPAC ambiguity code
