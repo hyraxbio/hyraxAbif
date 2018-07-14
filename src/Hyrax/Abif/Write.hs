@@ -64,14 +64,14 @@ writeAbif destPath ab1 = do
 -- | Create the 'Abif' using "Data.Binary"
 putAbif :: Abif -> B.Put
 putAbif (Abif header root dirs) = do
-  -- Data starts at offset 128
-  let startDataOffset = 128
   -- Total data size
   let dataSize = foldl' (\acc i -> if i > 4 then acc + i else acc) 0 $ dDataSize <$> dirs
   
   -- Write the header
   putHeader header
 
+  -- Data starts at offset 128
+  let startDataOffset = 128
   -- Write the root directory entry
   putDirectory (startDataOffset + dataSize) $ root { dDataSize = 28 * length dirs
                                                    , dElemNum = length dirs
