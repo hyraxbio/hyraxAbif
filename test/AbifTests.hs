@@ -20,6 +20,19 @@ import qualified Hyrax.Abif.Write as H
 import qualified Hyrax.Abif.Generate as H
 import           Generators
 
+
+-- | Test that complementing nucleotides is reversible
+prop_complementNucs :: Property
+prop_complementNucs = property $ do
+  nucs' <- forAll $ nucsGen
+  let nucs = Txt.replace "X" "N" nucs'
+
+  let n1 = H.complementNucleotides nucs
+  let n2 = Txt.replace "X" "N" $ H.complementNucleotides n1
+
+  nucs === n2
+
+  
 -- | Test that an ab1 (write, read, write, read) results in the original data
 prop_roundtrip :: Property
 prop_roundtrip = property $ do 
@@ -112,6 +125,7 @@ readArray getFn = do
     c <- getFn
     cs <- readArray getFn
     pure (c:cs)
+
 
 
 tests :: IO Bool

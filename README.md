@@ -138,6 +138,14 @@ Results in the following weighted nucleotide per position
 
 *Note that the reads do not need to be the same length.*
 
+
+### Reverse reads
+
+A weighted FASTA can represent a reverse read. To do this add a `R` suffix to the weight.
+The data you enter should be entered as if it was a forward read. This data will be complemented
+and reversed before writing to the ABIF
+
+
 ---
 
 #### Example FASTA - single file

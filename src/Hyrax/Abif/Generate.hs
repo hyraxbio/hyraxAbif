@@ -66,6 +66,22 @@ _G
 
 <<docs/eg_multi_mix.png>>
 
+
+== Reverse reads
+
+A weighted FASTA can represent a reverse read. To do this add a `R` suffix to the weight.
+The data you enter should be entered as if it was a forward read. This data will be complemented
+and reversed before writing to the ABIF
+
+E.g.
+
+@
+> 1R
+ACAG
+@
+
+<<docs/eg_multi_mix.png>>
+
 See README.md for additional details and examples
 -}
 module Hyrax.Abif.Generate
@@ -74,6 +90,7 @@ module Hyrax.Abif.Generate
     , readWeightedFasta
     , iupac
     , unIupac
+    , complementNucleotides
     ) where
 
 import           Protolude
@@ -197,6 +214,8 @@ generateTraceData weighted =
 
 
 -- | Read a weighted FASTA file. See the module documentation for details on the format of the weighted FASTA 
+-- Reads with a weight followed by an `R` are reverse reads, and the AB1 generated will contain the complemeted
+-- sequence.
 --
 -- e.g. weighted FASTA
 --
@@ -235,9 +254,17 @@ readWeightedFasta fastaData =
         Right r -> Right r
 
     readWeighted :: Fasta -> Either Text (Double, Text)
-    readWeighted (Fasta hdr dta) =
+    readWeighted (Fasta hdr' dta) =
+      let (processNucs, hdr) =
+            -- If there is a 'R' suffix, then generate a reverse sequence
+            --  Which means complement each nucleotide and then reverse the string
+            if Txt.isSuffixOf "R" hdr'
+            then (Txt.reverse . complementNucleotides, Txt.strip . Txt.dropEnd 1 $ hdr')
+            else (identity, hdr')
+      in
+      
       case (readMaybe . Txt.unpack $ hdr :: Maybe Double) of
-        Just weight -> Right (min 1 . max 0 $ weight, Txt.strip dta)
+        Just weight -> Right (min 1 . max 0 $ weight, processNucs $ Txt.strip dta)
         Nothing -> Left $ "Invalid header reading, expecting numeric weight, got: " <> hdr
 
   
@@ -329,3 +356,21 @@ iupac ns =
         (False, True,  True,  True ) -> 'B'
         (True,  True,  True,  True ) -> 'N'
         _ -> '_'
+
+
+-- | Return the complement of a nucelotide string
+complementNucleotides :: Text -> Text
+complementNucleotides ns =
+  let
+    un = unIupac <$> Txt.unpack ns
+    comp = complementNuc <<$>> un
+    iu = iupac comp
+  in
+  Txt.pack iu
+
+  where
+    complementNuc 'A' = 'T'
+    complementNuc 'G' = 'C'
+    complementNuc 'T' = 'A'
+    complementNuc 'C' = 'G'
+    complementNuc x = x
