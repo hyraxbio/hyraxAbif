@@ -80,8 +80,6 @@ E.g.
 ACAG
 @
 
-<<docs/eg_multi_mix.png>>
-
 See README.md for additional details and examples
 -}
 module Hyrax.Abif.Generate
