@@ -387,6 +387,7 @@ iupac ns =
         _ -> '_'
 
 
+{-! SECTION< gen_complement !-}
 -- | Return the complement of a nucelotide string
 complementNucleotides :: Text -> Text
 complementNucleotides ns =
@@ -403,3 +404,4 @@ complementNucleotides ns =
     complementNuc 'T' = 'A'
     complementNuc 'C' = 'G'
     complementNuc x = x
+{-! SECTION> gen_complement !-}
