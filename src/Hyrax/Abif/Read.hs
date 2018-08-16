@@ -152,8 +152,11 @@ getDebug d =
           ElemChar -> -- Array of chars can be treated as a string
             flip B.runGet (dData d) $ lbl $ do
               cs <- readArray B.getWord8
-              let c = BSL.pack cs
-              pure $ d { dDataDebug = [TxtE.decodeUtf8 . BSL.toStrict $ c] }
+              case dTagName d of
+                "PCON" -> pure d { dDataDebug = [show cs] }
+                _ -> do
+                  let c = BSL.pack cs
+                  pure $ d { dDataDebug = [TxtE.decodeUtf8 . BSL.toStrict $ c] }
 
           --ElemShort ->
           --  flip B.runGet (dData d) $ lbl $ do
