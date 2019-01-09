@@ -11,6 +11,12 @@ See
   - https://hackage.haskell.org/package/hyraxAbif for the hackage documentation
   - http://www6.appliedbiosystems.com/support/software_community/ABIF_File_Format.pdf for a high level overview of the AB1 file format.
 
+
+# Licence
+
+See the LICENCE file. Please note that this package is distributed *without warranties or conditions of any kind.
+
+
 # Building
 
 Build with one of
