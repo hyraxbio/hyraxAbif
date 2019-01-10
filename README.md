@@ -10,6 +10,7 @@ See
 
   - https://hackage.haskell.org/package/hyraxAbif for the hackage documentation
   - http://www6.appliedbiosystems.com/support/software_community/ABIF_File_Format.pdf for a high level overview of the AB1 file format.
+  - https://www.andrevdm.com/posts/2019-01-09-abif-chromatograms.html for an overview of how the package is implemented and additional usage information
 
 
 # Licence
