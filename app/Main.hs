@@ -14,6 +14,7 @@ import qualified Language.Haskell.HsColour.Colourise as Clr
 
 import qualified Hyrax.Abif as H
 import qualified Hyrax.Abif.Read as H
+import qualified Hyrax.Abif.Write as H
 import qualified Hyrax.Abif.Generate as H
 
 main :: IO ()
@@ -23,7 +24,8 @@ main = do
   case headMay args of
     Just "dump" -> runDump
     Just "gen" -> runGenerateAb1
-    _ -> putText "unknown args, expecting dump/gen"
+    Just "strip" -> runStrip
+    _ -> putText "unknown args, expecting dump/gen/strip"
   
 
 runGenerateAb1 :: IO ()
@@ -59,6 +61,23 @@ runDump =
             ) <$> debugged
     _ ->
       putText "Expecting path to ab1"
+
+
+runStrip :: IO ()
+runStrip =
+  Env.getArgs >>= \case
+    [_, source, dest] ->
+      H.readAbif source >>= \case
+        Right orig -> do
+          let filterDir d = H.dTagName d `elem` ["DATA","FWO_","LANE","PBAS","PDMF","PLOC","S/N%","SMPL"]
+          let stripped' = orig { H.aDirs = filter filterDir (H.aDirs orig) }
+          let stripped = H.addDirectory stripped' $ H.mkComment "Stripped by HyraxABIF"
+          H.writeAbif dest stripped
+
+        Left e -> putText $ "Error reading source\n" <> e
+
+    _ ->
+      putText "Expecting source and dest path"
 
 
 myColourPrefs :: Clr.ColourPrefs

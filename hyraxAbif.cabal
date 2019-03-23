@@ -1,13 +1,13 @@
 cabal-version:       2.2
 name:                hyraxAbif
-version:             0.2.3.16
+version:             0.2.3.17
 synopsis:            Modules for parsing, generating and manipulating AB1 files.
 homepage:            https://github.com/hyraxbio/hyraxAbif/#readme
 license:             BSD-3-Clause OR Apache-2.0
 license-file:        LICENSE
 author:              HyraxBio
 maintainer:          andre@hyraxbio.co.za, andre@andrevdm.com
-copyright:           2018 HyraxBio
+copyright:           2018/2019 HyraxBio
 category:            Bioinformatics
 build-type:          Simple
 extra-source-files:  README.md
