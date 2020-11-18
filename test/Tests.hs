@@ -2,7 +2,6 @@
 
 import           Protolude
 import qualified System.IO as IO
-import           System.Exit (exitFailure)
 
 import qualified AbifTests
 import qualified FastaTests
