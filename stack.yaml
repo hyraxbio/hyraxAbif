@@ -15,7 +15,7 @@
 # resolver:
 #  name: custom-snapshot
 #  location: "./custom-snapshot.yaml"
-resolver: lts-18.18
+resolver: lts-19.5
 
 # User packages to be built.
 # Various formats can be used as shown in the example below.
@@ -36,11 +36,12 @@ resolver: lts-18.18
 # non-dependency (i.e. a user package), and its test suites and benchmarks
 # will not be run. This is useful for tweaking upstream packages.
 packages:
-- .
+  - .
 # Dependency packages to be pulled from upstream that are not in the resolver
 # (e.g., acme-missiles-0.3)
-# extra-deps: []
-
+extra-deps:
+  - github: protolude/protolude
+    commit: 3e249724fd0ead27370c8c297b1ecd38f92cbd5b
 # Override default flag values for local packages and extra-deps
 # flags: {}
 
