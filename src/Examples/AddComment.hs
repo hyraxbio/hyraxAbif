@@ -12,7 +12,7 @@ See other examples in "Examples"
 -}
 module Examples.AddComment where
 
-import           Protolude
+import           Verset
 
 import qualified Hyrax.Abif.Read as H
 import qualified Hyrax.Abif.Write as H

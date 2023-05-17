@@ -3,7 +3,7 @@
 
 module Generators where
 
-import           Protolude
+import           Verset
 import qualified Data.Text as Txt
 import           Hedgehog
 import qualified Hedgehog.Gen as Gen

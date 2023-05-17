@@ -12,7 +12,7 @@ See other examples in "Examples"
 -}
 module Examples.ReadAb1 where
 
-import           Protolude
+import           Verset
 
 import qualified Hyrax.Abif.Read as H
 

@@ -36,7 +36,7 @@ module Hyrax.Abif.Read
     , getDirectory
     ) where
 
-import           Protolude
+import           Verset
 import qualified Data.Text as Txt
 import qualified Data.Text.Encoding as TxtE
 import qualified Data.Binary as B
@@ -171,7 +171,7 @@ getDebug d =
     readArray :: B.Get n -> B.Get [n]
     readArray getFn = do
       e <- B.isEmpty
-      if e then return []
+      if e then pure []
       else do
         c <- getFn
         cs <- readArray getFn

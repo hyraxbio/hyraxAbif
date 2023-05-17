@@ -1,6 +1,6 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 
-import           Protolude
+import           Verset
 import qualified System.IO as IO
 
 import qualified AbifTests

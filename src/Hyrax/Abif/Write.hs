@@ -34,7 +34,7 @@ module Hyrax.Abif.Write
     , Base (..)
     ) where
 
-import           Protolude
+import           Verset
 import qualified Data.Text as Txt
 import qualified Data.Text.Encoding as TxtE
 import qualified Data.Binary as B

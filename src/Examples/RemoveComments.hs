@@ -12,7 +12,7 @@ See other examples in "Examples"
 -}
 module Examples.RemoveComments where
 
-import           Protolude
+import           Verset
 
 import qualified Hyrax.Abif as H
 import qualified Hyrax.Abif.Read as H

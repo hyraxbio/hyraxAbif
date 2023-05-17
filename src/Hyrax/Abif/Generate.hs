@@ -91,7 +91,7 @@ module Hyrax.Abif.Generate
     , complementNucleotides
     ) where
 
-import           Protolude
+import           Verset
 import qualified Data.Text as Txt
 import qualified Data.Text.Encoding as TxtE
 import qualified Data.List as Lst

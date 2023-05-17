@@ -16,7 +16,7 @@ module Hyrax.Abif.Fasta
     , parseFasta
     ) where
 
-import           Protolude hiding (lines)
+import           Verset hiding (lines)
 import qualified Data.Text as Txt
 
 -- | FASTA data

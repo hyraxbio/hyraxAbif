@@ -27,7 +27,7 @@ module Hyrax.Abif
     , describeElemType
     ) where
 
-import           Protolude
+import           Verset
 import qualified Data.ByteString.Lazy as BSL
 
 

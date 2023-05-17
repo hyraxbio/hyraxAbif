@@ -4,7 +4,7 @@
 
 module Main where
 
-import           Protolude
+import           Verset
 import qualified Data.Text as Txt
 import qualified Data.ByteString.Lazy as BSL
 import           Text.Show.Pretty (ppShow)

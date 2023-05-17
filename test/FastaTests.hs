@@ -4,7 +4,7 @@
 
 module FastaTests (tests) where
 
-import           Protolude
+import           Verset
 import           Hedgehog
 import qualified Hedgehog.Gen as Gen
 
