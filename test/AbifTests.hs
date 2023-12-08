@@ -32,10 +32,10 @@ prop_complementNucs = property $ do
 
   nucs === n2
 
-  
+
 -- | Test that an ab1 (write, read, write, read) results in the original data
 prop_roundtrip :: Property
-prop_roundtrip = property $ do 
+prop_roundtrip = property $ do
   fdata <- forAll $ genFastaData 2
   let fasta = TxtE.encodeUtf8 $ toFastaTxt False fdata
 
@@ -47,8 +47,8 @@ prop_roundtrip = property $ do
   ab1Read2 <- evalEither $ H.getAbif ab1Written2
 
   ab1Read1 === ab1Read2
-  
-  
+
+
 -- | Generate an ab1 from a fasta and then confirm that the generated peaks of the
 --    chromatogram match the original fasta.
 --    Note that we are only testing the simple/single fasta case (i.e. no mixes)
@@ -93,15 +93,17 @@ prop_readPeaks = property $ do
       case reverse $ Lst.sortOn snd [('A', a), ('C', c), ('G', g), ('T', t)] of
         ((n,_) : _) -> n
         _ -> '?'
-    
+
     readDataPeaks :: H.Abif -> Int -> [Int] -> Either Text [Int]
     readDataPeaks ab1 dirNum peaks =
       case readShorts <$> getDirEntry ab1 "DATA" dirNum of
         Left e -> Left e
         Right vs ->
           let valsAtPeaks = atMay vs <$> peaks in
-          maybeToRight "peaks" $ sequenceA valsAtPeaks
-  
+          case sequenceA valsAtPeaks of
+            Nothing -> Left "Could not read peaks"
+            Just vs' -> Right vs'
+
 
 getDirEntry :: H.Abif -> Text -> Int -> Either Text BSL.ByteString
 getDirEntry ab1 dirName dirNum =
